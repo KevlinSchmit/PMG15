@@ -1,191 +1,160 @@
 import './style.css';
+import { marketContent, interviews } from './content.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 let paused = reduceMotion.matches;
+try { paused ||= localStorage.getItem('blue-catch-motion') === 'off'; } catch {}
 
-const marketContent = {
-  tam: {
-    label: 'TOTAL ADDRESSABLE MARKET',
-    value: '$230,000,000',
-    description: 'Based on U.S. recreational and commercial fishing assumptions.',
-    html: `<h3>TAM - Total Addressable Market</h3>
-      <div class="market-text-grid"><div><p>As our products currently targets to U.S market, number of people who participates in the recreational fishing industry and the number of people who employs in the commercial fishing industry is taking into accountability for the calculation of the total addressable market.</p>
-      <ul><li>57 Million U.S. Citizens participated in recreational fishing until 2025</li><li>51,902 U.S. Citizens are employed in the commercial fishing industry until 2025</li></ul></div>
-      <div><h4>Assumptions:</h4><ul><li>Assuming 20% of the people who once fished is an amateur angler</li><li>Assuming 10% of the amateur angler would purchase our product</li><li>Assuming 30% of the commercial angler would purchase our product</li><li>Assuming all customer would spend 199$ annually on our product (the retail price of a fishing rod)</li></ul></div></div>
-      <div class="calculation"><small>Calculations:</small>TAM = (5700,000,0 * 0.2 * 0.1 + 51902 * 0.3) * 199 = <strong>$ 230,000,000</strong></div>`
-  },
-  sam: {
-    label: 'SERVICEABLE AVAILABLE MARKET',
-    value: '$117,967,200',
-    description: 'Based on 52% serviceability / integration feasibility.',
-    html: `<h3>SAM - Serviceable Available Market</h3>
-      <div class="market-text-grid"><div><p><b>Total number of potential customers:</b> 1.14 million - Established based on previous assumption</p><p><b>Average Annual Revenue per Customer:</b> $199 - The retail price of a single fishing rod</p><h4>Percentage of Customers we can serve:</h4><p>The statistics of serviceable customers in the market is highly dependent on the availability of the technology. Our product makes usage of a combination of three types of exponential technology: Artificial Intelligence, Miniaturized camera technology, and Real-time 3D visualization</p></div>
-      <div><h4>Assumptions:</h4><ul><li>Existing technology of AI tool - Fishial - has an identification ability of detecting over 865 types of fish, while real life oceanic environment is still needed to be trained. Percentage availability: 70%</li><li>Waterproof, high resolution, and mini underwater camera is highly available, but short delay of image still needs to be explored. Percentage availability: 76%</li><li>Mature technology like Apple AR Quick look can demonstrate 3D models. Percentage availability: 90%</li></ul></div></div>
-      <div class="calculation"><small>Calculation: (70% + 76% + 90%) / 3 = 52%</small>SAM = 1,140,000 customers * $199 * 52% = <strong>$ 117,967,200</strong></div>`
-  },
-  som: {
-    label: 'SERVICE OBTAINABLE MARKET',
-    value: '$1,179,672',
-    description: 'Based on 1% market capture assumption.',
-    html: `<h3>SOM - Service Obtainable Market</h3>
-      <div class="market-text-grid"><div><p><b>Number potential customers:</b> 1.14 million / <b>Average Annual Revenue per Customer:</b> $199</p><p><b>Percentage of Customers we can serve:</b> 52%</p><h4>Percentage of market you can capture:</h4><p>The capture rate is calculated by using the percentage of potential customers who has the desire to purchase over the total number who had the opportunity.</p></div>
-      <div><p>To this end, based on our estimated production, distribution, and early adoption capacity, we assume that 5,000 customers would purchase our product annually in the first three years. Therefore, percentage of market captured is calculated by:</p><p>5000 / 592800 = 0.84%</p><p>Rounding up the percentage to 1%, the number for our SOM is:</p></div></div>
-      <div class="calculation">SOM = 1,140,000 * 52% * 1% * $199 = <strong>$1,179,672</strong></div>`
-  }
-};
-
-function selectMarket(key) {
-  const content = marketContent[key];
-  if (!content) return;
-  $$('[data-market]').forEach(button => {
-    const active = button.dataset.market === key;
-    button.classList.toggle('active', active);
-    if (button.matches('[role="tab"]')) {
-      button.setAttribute('aria-selected', active);
-      button.tabIndex = active ? 0 : -1;
-    } else button.setAttribute('aria-pressed', active);
-  });
-  $('#market-label').textContent = content.label;
-  $('#market-value').textContent = content.value;
-  $('#market-description').textContent = content.description;
-  const panel = $('#market-panel');
-  panel.innerHTML = content.html;
-  panel.setAttribute('aria-labelledby', `tab-${key}`);
-  panel.classList.remove('panel-enter');
-  void panel.offsetWidth;
-  panel.classList.add('panel-enter');
-}
-$$('[data-market]').forEach(button => button.addEventListener('click', () => selectMarket(button.dataset.market)));
-selectMarket('tam');
-$('#market-detail-link').addEventListener('click', () => $('#market-detail').scrollIntoView({ behavior: paused ? 'instant' : 'smooth', block: 'start' }));
-
-const interviews = [
-  {
-    label: '#1 Interviewee: professional fisher / Interview date: September 26, 2026',
-    points: [
-      'Agreed the idea of using a camera and AI to identify fish before they are hooked is really useful',
-      'He liked that the system would immediately retract the hooks when it detects a protected species rather than relying on humans to recognize the animal after the damage already happened.',
-      'However, he was concerned about how accurately the AI could identify fish underwater, especially in low-light conditions. In addition, he was more interested if the product offered everyday fishing benefits.'
-    ]
-  },
-  {
-    label: '#2: Interviewee: occasional fisher / Interview date: September 27, 2026',
-    points: [
-      'The interviewee doesn’t fish too often, but she liked how the concept adds a layer of education to fishing.',
-      'She thought showing the protected fishes on screen with 3D models and fun facts could make fishing more interesting for people who are not experienced anglers.',
-      'concerned that the technology might be complicated for people who are not familiar with more technical devices (such as seniors), so she suggested making the interface simple and easy to understand.'
-    ]
-  },
-  {
-    label: '#3: Interviewee: amateur fishing hobbyist / Interview date: September 29, 2026',
-    points: [
-      'Passionate about fishing and is interested in the concept. He has personal experience on the issue, where he had accidentally caught an endangered species while fishing and had to set it free, though it was already injured and likely had a hard time surviving afterwards.',
-      'Interviewee also mentioned that he would prefer to see the camera’s view on the screen, as it would help him see if there is actually any fish in that location.'
-    ]
-  }
-];
-function selectInterview(index) {
-  const interview = interviews[index];
-  const panel = $('#interview-panel');
-  panel.replaceChildren();
-  const title = document.createElement('p'); title.className = 'mono'; title.textContent = interview.label;
+// Each calculation and interview is a separate slide, with all original wording.
+$$('[data-calculation]').forEach(panel => { panel.innerHTML = marketContent[panel.dataset.calculation].html; });
+$$('[data-interview-content]').forEach(panel => {
+  const interview = interviews[Number(panel.dataset.interviewContent)];
+  const label = document.createElement('p'); label.className = 'interview-label mono'; label.textContent = interview.label;
   const list = document.createElement('ul');
-  interview.points.forEach(text => { const item = document.createElement('li'); item.textContent = text; list.append(item); });
-  panel.append(title, list);
-  panel.setAttribute('aria-labelledby', `interview-tab-${index}`);
-  panel.classList.remove('panel-enter'); void panel.offsetWidth; panel.classList.add('panel-enter');
-  $$('[data-interview]').forEach(button => {
-    const active = Number(button.dataset.interview) === index;
-    button.classList.toggle('active', active);
-    button.setAttribute('aria-selected', active);
-    button.tabIndex = active ? 0 : -1;
-  });
+  interview.points.forEach(point => { const item = document.createElement('li'); item.textContent = point; list.append(item); });
+  panel.append(label, list);
+});
+
+const slides = $$('.slide');
+const stage = $('.slide-stage');
+const transition = $('.transition-ocean');
+let current = 0;
+let busy = false;
+let animationTimer;
+let demoTimer;
+let transitionVersion = 0;
+const initialSlide = Number(location.hash.match(/^#slide-(\d+)$/)?.[1]) - 1;
+if (Number.isInteger(initialSlide) && initialSlide >= 0 && initialSlide < slides.length) current = initialSlide;
+
+function fitStage() {
+  const portrait = innerWidth < 700 && innerHeight > innerWidth;
+  document.body.classList.toggle('portrait', portrait);
+  const width = portrait ? 900 : 1440;
+  const height = portrait ? 1400 : 810;
+  const controlsHeight = innerWidth < 700 ? 66 : 64;
+  const availableHeight = Math.max(100, innerHeight - controlsHeight);
+  const scale = Math.min(innerWidth / width, availableHeight / height);
+  stage.style.setProperty('--slide-width', `${width}px`);
+  stage.style.setProperty('--slide-height', `${height}px`);
+  stage.style.setProperty('--slide-scale', scale);
+  stage.style.top = `${availableHeight / 2}px`;
 }
-$$('[data-interview]').forEach(button => button.addEventListener('click', () => selectInterview(Number(button.dataset.interview))));
-selectInterview(0);
+window.addEventListener('resize', fitStage);
+window.visualViewport?.addEventListener('resize', fitStage);
+fitStage();
 
-// All tab lists support the standard arrow-key / Home / End interactions.
-$$('[role="tablist"]').forEach(list => list.addEventListener('keydown', event => {
-  const tabs = $$('[role="tab"]', list);
-  const current = tabs.indexOf(document.activeElement);
-  if (current === -1) return;
-  let next;
-  if (['ArrowRight', 'ArrowDown'].includes(event.key)) next = (current + 1) % tabs.length;
-  if (['ArrowLeft', 'ArrowUp'].includes(event.key)) next = (current - 1 + tabs.length) % tabs.length;
-  if (event.key === 'Home') next = 0;
-  if (event.key === 'End') next = tabs.length - 1;
-  if (next !== undefined) { event.preventDefault(); tabs[next].focus(); tabs[next].click(); }
-}));
-
-$$('[data-demo]').forEach(button => button.addEventListener('click', () => {
-  const state = button.dataset.demo;
+function setDemo(state) {
   $('.underwater-demo').dataset.state = state;
   $('.demo-state').textContent = state === 'protected' ? 'HOOKS RETRACTED' : 'HOOKS EXTENDED';
-  $$('[data-demo]').forEach(item => { const active = item === button; item.classList.toggle('active', active); item.setAttribute('aria-pressed', active); });
-}));
-// Decorative bubbles are deterministic, so the same scene is shown on each visit.
+  $$('[data-demo]').forEach(button => {
+    const selected = button.dataset.demo === state;
+    button.classList.toggle('active', selected);
+    button.setAttribute('aria-pressed', selected);
+  });
+}
+function playDemo() {
+  clearTimeout(demoTimer);
+  setDemo('fishing');
+  if (!paused) demoTimer = setTimeout(() => { if (slides[current].id === 'in-action') setDemo('protected'); }, 1500);
+}
+$$('[data-demo]').forEach(button => button.addEventListener('click', () => { clearTimeout(demoTimer); setDemo(button.dataset.demo); }));
+$('#play-sequence').addEventListener('click', playDemo);
 for (let i = 0; i < 16; i++) {
   const bubble = document.createElement('span');
-  bubble.style.left = `${(i * 37 + 9) % 100}%`;
-  bubble.style.animationDelay = `${-i * 1.3}s`;
-  bubble.style.animationDuration = `${7 + i % 5}s`;
+  bubble.style.cssText = `left:${(i * 37 + 9) % 100}%;animation-delay:${-i * 1.3}s;animation-duration:${7 + i % 5}s`;
   $('.water-particles').append(bubble);
 }
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    const active = i === index;
+    slide.classList.toggle('is-active', active);
+    slide.inert = !active;
+    slide.setAttribute('aria-hidden', String(!active));
+  });
+  current = index;
+  const slide = slides[current];
+  document.body.dataset.theme = slide.dataset.theme;
+  $('#slide-position').textContent = `${String(current + 1).padStart(2, '0')} / ${slides.length}`;
+  $('#slide-title').textContent = slide.dataset.title;
+  $('#slide-announcement').textContent = `Slide ${current + 1} of ${slides.length}: ${slide.dataset.title}`;
+  $('#previous-slide').disabled = current === 0;
+  const next = $('#next-slide');
+  const last = current === slides.length - 1;
+  next.textContent = last ? '↻' : '→';
+  next.setAttribute('aria-label', last ? 'Restart presentation' : 'Next slide');
+  next.title = last ? 'Restart presentation' : 'Next slide (Right Arrow or Space)';
+  $('.slide-progress').style.transform = `scaleX(${(current + 1) / slides.length})`;
+  try { history.replaceState(null, '', `#slide-${current + 1}`); } catch {}
+  clearTimeout(demoTimer);
+  if (slide.id === 'in-action') playDemo();
+  // Decode nearby source art before it appears in a transition.
+  for (const neighbour of [slides[current], slides[current + 1]]) {
+    if (neighbour) $$('img', neighbour).forEach(image => { image.loading = 'eager'; image.decode?.().catch(() => {}); });
+  }
+}
+function goTo(index) {
+  index = Math.max(0, Math.min(slides.length - 1, index));
+  if (index === current || busy || document.querySelector('dialog[open]')) return;
+  clearTimeout(demoTimer);
+  if (paused || reduceMotion.matches) { showSlide(index); return; }
+  busy = true;
+  const version = ++transitionVersion;
+  const backwards = index < current;
+  transition.dataset.effect = slides[index].dataset.transition;
+  transition.classList.toggle('backwards', backwards);
+  transition.classList.remove('play'); void transition.offsetWidth;
+  transition.classList.add('play');
+  stage.classList.add('changing');
+  // Swap the scenes while the illustrated water curtain covers the canvas.
+  animationTimer = setTimeout(() => {
+    if (version !== transitionVersion) return;
+    showSlide(index);
+    stage.classList.remove('changing');
+    animationTimer = setTimeout(() => {
+      if (version !== transitionVersion) return;
+      transition.classList.remove('play');
+      busy = false;
+    }, 470);
+  }, 430);
+}
+showSlide(current);
+$('#next-slide').addEventListener('click', () => goTo(current === slides.length - 1 ? 0 : current + 1));
+$('#previous-slide').addEventListener('click', () => goTo(current - 1));
+$$('[data-next]').forEach(button => button.addEventListener('click', () => goTo(current + 1)));
+
+let lastSwipe = 0;
+let touchStart;
+$('#presentation').addEventListener('click', event => {
+  if (Date.now() - lastSwipe < 450 || event.target.closest('button,a,input,textarea,select,summary,dialog')) return;
+  if (window.getSelection()?.toString()) return;
+  goTo(current + 1);
+});
+$('#presentation').addEventListener('touchstart', event => { touchStart = { x: event.changedTouches[0].clientX, y: event.changedTouches[0].clientY }; }, { passive: true });
+$('#presentation').addEventListener('touchend', event => {
+  if (!touchStart || event.target.closest('button,a,dialog')) return;
+  const dx = event.changedTouches[0].clientX - touchStart.x;
+  const dy = event.changedTouches[0].clientY - touchStart.y;
+  if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { lastSwipe = Date.now(); goTo(current + (dx < 0 ? 1 : -1)); }
+  touchStart = null;
+}, { passive: true });
 
 function setMotion(value) {
   paused = value;
   document.body.classList.toggle('motion-paused', paused);
-  document.documentElement.style.scrollBehavior = paused ? 'auto' : '';
   const button = $('.motion-toggle');
-  button.setAttribute('aria-pressed', paused);
+  button.setAttribute('aria-pressed', String(paused));
   button.setAttribute('aria-label', paused ? 'Resume animations' : 'Pause animations');
-  button.innerHTML = `<span class="pause-icon">${paused ? '▷' : 'Ⅱ'}</span> MOTION ${paused ? 'OFF' : 'ON'}`;
+  button.title = paused ? 'Resume animations' : 'Pause animations';
+  button.textContent = paused ? '▷' : 'II';
+  if (paused) clearTimeout(demoTimer);
   try { localStorage.setItem('blue-catch-motion', paused ? 'off' : 'on'); } catch {}
 }
-try { paused = localStorage.getItem('blue-catch-motion') === 'off' || reduceMotion.matches; } catch {}
 setMotion(paused);
 $('.motion-toggle').addEventListener('click', () => setMotion(!paused));
 reduceMotion.addEventListener('change', event => { if (event.matches) setMotion(true); });
-
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); } });
-}, { threshold: 0.06, rootMargin: '0px 0px -15px 0px' });
-$$('.reveal').forEach(element => revealObserver.observe(element));
-document.documentElement.classList.add('js-ready');
-
-const chapters = $$('.chapter');
-let activeChapter = 0;
-let scrollTicking = false;
-function updateScroll() {
-  const scrollable = document.documentElement.scrollHeight - innerHeight;
-  $('.reading-progress').style.transform = `scaleX(${scrollable > 0 ? scrollY / scrollable : 0})`;
-  let current = 0;
-  chapters.forEach((chapter, i) => { if (chapter.getBoundingClientRect().top < innerHeight * .45) current = i; });
-  activeChapter = current;
-  $$('.chapter-rail a').forEach((link, i) => {
-    link.classList.toggle('active', i === current);
-    if (i === current) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current');
-  });
-  scrollTicking = false;
-}
-window.addEventListener('scroll', () => { if (!scrollTicking) { scrollTicking = true; requestAnimationFrame(updateScroll); } }, { passive: true });
-updateScroll();
-
-const menuToggle = $('.menu-toggle');
-menuToggle.addEventListener('click', () => {
-  const open = $('.site-header').classList.toggle('menu-open');
-  menuToggle.setAttribute('aria-expanded', open);
-  menuToggle.setAttribute('aria-label', open ? 'Close chapter menu' : 'Open chapter menu');
-});
-$$('.site-header nav a').forEach(link => link.addEventListener('click', () => {
-  $('.site-header').classList.remove('menu-open');
-  menuToggle.setAttribute('aria-expanded', false);
-  menuToggle.setAttribute('aria-label', 'Open chapter menu');
-}));
-
-// Native dialogs retain focus, trap it while open, and restore it to the trigger.
 const imageDialog = $('.image-dialog');
 const deckDialog = $('.deck-dialog');
 let dialogTrigger;
@@ -272,42 +241,42 @@ $$('[data-deck]').forEach(button => button.addEventListener('click', () => {
 $('#deck-prev').addEventListener('click', () => selectDeckPage(deckPage - 1));
 $('#deck-next').addEventListener('click', () => selectDeckPage(deckPage + 1));
 
+$$('[data-sources]').forEach(button => button.addEventListener('click', () => showDialog(document.getElementById(button.dataset.sources), button)));
 const presentButton = $('.present-button');
-function updatePresentationMode() {
-  const presenting = !!document.fullscreenElement;
-  document.body.classList.toggle('presentation-mode', presenting);
-  presentButton.setAttribute('aria-label', presenting ? 'Exit fullscreen presentation' : 'Enter fullscreen presentation');
-  $('.present-label').textContent = presenting ? 'EXIT' : 'PRESENT';
-}
-presentButton.addEventListener('click', async () => {
+async function toggleFullscreen() {
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
     else await document.documentElement.requestFullscreen();
-  } catch {
-    // Some embedded browsers block fullscreen; keep a useful distraction-free mode.
-    const presenting = document.body.classList.toggle('presentation-mode');
-    presentButton.setAttribute('aria-label', presenting ? 'Exit presentation mode' : 'Enter presentation mode');
-    $('.present-label').textContent = presenting ? 'EXIT' : 'PRESENT';
-  }
+  } catch { /* Fullscreen can be blocked in an embedded browser; slides already fill the available view. */ }
+}
+presentButton.addEventListener('click', toggleFullscreen);
+document.addEventListener('fullscreenchange', () => {
+  const active = !!document.fullscreenElement;
+  presentButton.setAttribute('aria-label', active ? 'Exit fullscreen presentation' : 'Enter fullscreen presentation');
+  presentButton.title = active ? 'Exit fullscreen (Esc)' : 'Fullscreen (F)';
+  fitStage();
 });
-document.addEventListener('fullscreenchange', updatePresentationMode);
 document.addEventListener('keydown', event => {
+  if (event.repeat) return;
   if (deckDialog.open) {
-    if (event.key === 'ArrowRight') { event.preventDefault(); selectDeckPage(deckPage + 1); }
+    if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); selectDeckPage(deckPage + 1); }
     if (event.key === 'ArrowLeft') { event.preventDefault(); selectDeckPage(deckPage - 1); }
     return;
   }
-  if (imageDialog.open) return;
-  if (event.key === 'Escape' && !document.fullscreenElement) {
-    document.body.classList.remove('presentation-mode');
-    $('.present-label').textContent = 'PRESENT';
-    presentButton.setAttribute('aria-label', 'Enter fullscreen presentation');
-  }
-  // Chapter navigation is deliberately separate from normal vertical scrolling.
-  if (event.target.closest('button, a, input, textarea, [role="tablist"], summary')) return;
-  if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
-    event.preventDefault();
-    const next = Math.max(0, Math.min(chapters.length - 1, activeChapter + (event.key === 'ArrowRight' ? 1 : -1)));
-    chapters[next].scrollIntoView({ behavior: paused ? 'instant' : 'smooth' });
-  }
+  if (document.querySelector('dialog[open]')) return;
+  if (event.target.closest('input,textarea,select,[contenteditable="true"]')) return;
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  if (event.key.toLowerCase() === 'f') { event.preventDefault(); toggleFullscreen(); return; }
+  // Space activates a focused control natively; it advances the slide everywhere else.
+  if (event.key === ' ' && event.target.closest('button,a,summary')) return;
+  if (['ArrowRight', 'PageDown', ' '].includes(event.key)) {
+    event.preventDefault(); goTo(current + (event.shiftKey && event.key === ' ' ? -1 : 1));
+  } else if (['ArrowLeft', 'PageUp'].includes(event.key)) {
+    event.preventDefault(); goTo(current - 1);
+  } else if (event.key === 'Home') { event.preventDefault(); goTo(0); }
+  else if (event.key === 'End') { event.preventDefault(); goTo(slides.length - 1); }
+});
+window.addEventListener('hashchange', () => {
+  const target = Number(location.hash.match(/^#slide-(\d+)$/)?.[1]) - 1;
+  if (Number.isInteger(target) && target >= 0 && target < slides.length) goTo(target);
 });

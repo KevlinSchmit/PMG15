@@ -1,6 +1,6 @@
 # Blue Catch — interactive presentation
 
-A responsive, animated presentation website built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The source images, wording, figures, and calculation inconsistencies are preserved. Interface labels and decorative concept animations support the presentation; the hook demonstration is an illustrative animation, not a working AI system.
+A responsive, animated, 26-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The source images, wording, figures, and calculation inconsistencies are preserved. The original interviews have separate slides for readability, and an additional concept animation demonstrates the hooks. Interface labels and decorative animations support the presentation; the hook demonstration is illustrative, not a working AI system.
 
 ## Run
 
@@ -21,15 +21,18 @@ To create a single downloadable presentation that opens directly in a browser, r
 
 ## Present
 
-- Scroll through six continuous chapters; use the side markers or the top navigation to jump.
-- Use Left / Right arrows to move between chapters when no control has focus.
-- Use **Present** in the bottom-right corner for fullscreen. Escape exits.
+- Click the slide background, press **Right Arrow**, or press **Space** for the next slide. **Left Arrow** or **Shift + Space** goes back. Buttons, links, and zoomable diagrams keep their own interactions.
+- Use **Home** / **End** for the first / final slide. The final slide's next button restarts the presentation.
+- Swipe left / right on touch screens. The page does not scroll, and there is no top navigation.
+- Wave, fishing-rod, and swimming-fish transitions use the deck's ocean theme and original illustrations. Each slide's text and artwork animate into place.
+- Use the fullscreen icon at bottom right, or press **F**. Escape exits fullscreen.
 - Choose **Protected species** to see hooks retract and the float light up; **Fishing** resets it.
-- Select TAM, SAM, or SOM to reveal the original assumptions and calculations.
-- Select an interview to read its complete feedback.
+- The product demonstration plays its fishing-to-protected-species sequence automatically once on entry; **Play sequence** replays it.
+- TAM, SAM, SOM, and each interview have their own complete slides.
 - Open original diagrams and zoom to 400% for details.
-- **Original deck** opens all 23 original pages, with keyboard navigation and a PDF download.
-- **Motion on/off** pauses animations. System reduced-motion preferences are respected.
+- The original-deck icon opens all 23 source pages, with keyboard navigation and a PDF download. **Sources** opens the original chart citations.
+- The pause icon pauses animations and makes slide changes immediate. System reduced-motion preferences are respected, including disabling automatic demonstration playback.
+- Each slide has a shareable URL fragment, such as `#slide-14`. Inactive slides are hidden from focus and assistive technology. Portrait screens use a taller, fitted slide layout.
 
 ## Content fidelity
 
