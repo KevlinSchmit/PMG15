@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "playwright test"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "vite": "^7.1.0"
   },
   "dependencies": {
     "@fontsource/anton": "^5.2.0",
-    "@fontsource/dm-sans": "^5.2.0",
-    "@fontsource/dm-mono": "^5.2.0"
+    "@fontsource/dm-mono": "^5.2.0",
+    "@fontsource/dm-sans": "^5.2.0"
   }
 }
