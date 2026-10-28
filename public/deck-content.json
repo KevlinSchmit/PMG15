@@ -1,0 +1,94 @@
+[
+  {
+    "page": 1,
+    "text": "Blue Catch\nGrace Li, Sophia Li, Leanne Wang, Daisy Wang"
+  },
+  {
+    "page": 2,
+    "text": "Mind map:\nFinding the\nProblem"
+  },
+  {
+    "page": 3,
+    "text": "Mind map:\nDeﬁning the\nProblem"
+  },
+  {
+    "page": 4,
+    "text": " Deﬁne Challenge & Market Opportunity\n\n\n●  Accidental bycatch: Recreational anglers can unintentionally hook\n    protected animals because they cannot always see what is approaching\n    their bait underwater.\n  ❖  Although people could release them immediately back to the ocean,\n       hooks can injure the mouth, head, or digestive tract. Swallowed hooks\n       can interfere with feeding and cause starvation and death.\n● NOAA states that accidental capture or injury of sea turtles and marine\n   mammals during fishing is a significant threat to their health and recovery.\n●  Large potential market: In the U.S. alone, 12.7 million people\n    participated in saltwater fishing in 2022, making approximately 104 million\n    saltwater fishing trips."
+  },
+  {
+    "page": 5,
+    "text": "Exponential Drivers\n\nArtificial intelligence (AI)\n\n❖  Rapid advances in computer vision are making real-time species recognition faster and more\n     accurate based on physical features (ex. body shape, color, size)\n❖   Smaller and more powerful AI chips allow complex image recognition to run directly on compact\n     devices with minimal delay\n\nMiniaturized camera technology\n\n❖  Cameras are becoming smaller and lighter while maintaining high image quality\n❖   Tiny waterproof cameras can now be integrated into fishing equipment without affecting usability\n\nReal-time 3D visualization\n\n❖  Improvements in 3D rendering technology make interactive visualizations more realistic\n❖  Advances in computing power allows detailed 3D models to run on everyday devices\n❖   Interactive visualization adds a new layer of engagement & educational content"
+  },
+  {
+    "page": 6,
+    "text": "   Our Solution\n●  Smart fishing equipment\n    ○  Camera on fish-shaped bait with retractable hooks\n        ■   Includes AI and when spotting a fish nearby, the AI will\n            compare it to endangered species to determine whether that\n                  fish is one\n        ■    If endangered then the hooks will retract into the bait to avoid\n                 injuring the fish immediately\n        ■  Hooks will remain retracted until that fish had left\n    ○  Screen on the pole\n        ■  Shows the endangered species captured as an interactive 3D\n              model, along with the photo camera just took with fun facts\n              about it\n    ○   Floats equipped with lights that can change color\n        ■   Will light up when hooks are retracted to notify the user\n        ■    If at night will change color since the float lights up at night\n               already"
+  },
+  {
+    "page": 7,
+    "text": ""
+  },
+  {
+    "page": 8,
+    "text": "    A7 Market\n      Potential\n\n\n\n\n\nLeanne, Daisy, Sophia, Grace"
+  },
+  {
+    "page": 9,
+    "text": ""
+  },
+  {
+    "page": 10,
+    "text": "Interview Feedbacks\n #1 Interviewee: professional ﬁsher / Interview date: September 26, 2026\n   ●   Agreed the idea of using a camera and AI to identify ﬁsh before they are hooked is really useful\n   ●  He liked that the system would immediately retract the hooks when it detects a protected species rather than\n         relying on humans to recognize the animal after the damage already happened.\n   ●   However, he was concerned about how accurately the AI could identify ﬁsh underwater, especially in low-light\n         conditions. In addition, he was more interested if the product offered everyday ﬁshing beneﬁts.\n #2: Interviewee: occasional ﬁsher / Interview date: September 27, 2026\n   ●   The interviewee doesn’t ﬁsh too often, but she liked how the concept adds a layer of education to ﬁshing.\n   ●   She thought showing the protected ﬁshes on screen with 3D models and fun facts could make ﬁshing more\n         interesting for people who are not experienced anglers.\n   ●   concerned that the technology might be complicated for people who are not familiar with more technical\n        devices (such as seniors), so she suggested making the interface simple and easy to understand.\n #3: Interviewee: amateur ﬁshing hobbyist / Interview date: September 29, 2026\n   ●   Passionate about ﬁshing and is interested in the concept. He has personal experience on the issue, where he\n       had accidentally caught an endangered species while ﬁshing and had to set it free, though it was already\n         injured and likely had a hard time surviving afterwards.\n   ●   Interviewee also mentioned that he would prefer to see the camera’s view on the screen, as it would help him\n        see if there is actually any ﬁsh in that location."
+  },
+  {
+    "page": 11,
+    "text": "TAM - Total Addressable Market\n\n As our products currently targets to U.S market, number of people who participates in the\n recreational ﬁshing industry and the number of people who employs in the commercial ﬁshing\n industry is taking into accountability for the calculation of the total addressable market.\n  ●  57 Million U.S. Citizens participated in recreational ﬁshing until 2025\n  ●   51,902 U.S. Citizens are employed in the commercial ﬁshing industry until 2025\n\n Assumptions:\n  ●  Assuming 20% of the people who once ﬁshed is an amateur angler\n  ●  Assuming 10% of the amateur angler would purchase our product\n  ●  Assuming 30% of the commercial angler would purchase our product\n  ●  Assuming all customer would spend 199$ annually on our product (the retail price of a ﬁshing\n      rod)\n\n Calculations:\n TAM = (5700,000,0 * 0.2 * 0.1 + 51902 * 0.3) * 199 =                      $ 230,000,000"
+  },
+  {
+    "page": 12,
+    "text": "SAM - Serviceable Available Market\n\nTotal number of potential customers: 1.14 million - Established based on previous assumption\nAverage Annual Revenue per Customer: $199 - The retail price of a single ﬁshing rod\nPercentage of Customers we can serve:\nThe statistics of serviceable customers in the market is highly dependent on the availability of the\ntechnology. Our product makes usage of a combination of three types of exponential technology:\nArtiﬁcial Intelligence, Miniaturized camera technology, and Real-time 3D visualization\nAssumptions:\n ●   Existing technology of AI tool - Fishial - has an identiﬁcation ability of detecting over 865\n     types of ﬁsh, while real life oceanic environment is still needed to be trained. Percentage\n      availability: 70%\n ●   Waterproof, high resolution, and mini underwater camera is highly available, but short delay of\n    image still needs to be explored. Percentage availability: 76%\n ●  Mature technology like Apple AR Quick look can demonstrate 3D models. Percentage\n      availability: 90%\nCalculation: (70% + 76% + 90%) / 3 = 52%\nSAM = 1,140,000 customers * $199 * 52% =                  $ 117,967,200"
+  },
+  {
+    "page": 13,
+    "text": "SOM - Service Obtainable Market\n\n Number potential customers: 1.14 million / Average Annual Revenue per Customer: $199\n Percentage of Customers we can serve: 52%\n Percentage of market you can capture:\n The capture rate is calculated by using the percentage of potential customers who has the desire to\n purchase over the total number who had the opportunity. To this end, based on our estimated\n production, distribution, and early adoption capacity, we assume that 5,000 customers would\n purchase our product annually in the ﬁrst three years. Therefore, percentage of market captured is\n calculated by:\n 5000 / 592800 = 0.84%\n Rounding up the percentage to 1%, the number for our SOM is:\n\n\n SOM = 1,140,000 * 52% * 1% * $199 =                     $1,179,672"
+  },
+  {
+    "page": 14,
+    "text": "Competitive Analysis\n\n              Daisy, Sophia, Leanne, Grace"
+  },
+  {
+    "page": 15,
+    "text": "Product Definition\n\n\nBlue Catch is an AI-powered smart fishing rod designed to\nhelp anglers avoid accidentally hooking protected marine\nanimals. It uses a camera attached to fish-shaped bait to\nidentify nearby fish and automatically retracts its hooks\nwhen a protected species is detected. A screen on the fishing\nrod displays the animal’s photo, an interactive 3D model,\nand fun facts. Our mission is to protect marine life while\nmaking fishing safer and more educational."
+  },
+  {
+    "page": 16,
+    "text": "SWOT Analysis of BlueCatch"
+  },
+  {
+    "page": 17,
+    "text": "Competitive Landscape                                                   Sources:\n                                                                                               1.\n                       Bycatch prevention rate                                                                                        https://www.fisheries.noaa.go\n                                 High                                        v/southeast/bycatch/turtle-ex\n                                                                                      cluder-devices\n                  Turtle Extruder                                        Blue Catch                                                                                               2.               Devices (1)\n                                                                                          https://pmc.ncbi.nlm.nih.gov/\n                                                                                articles/PMC3696171/\n                                     Smartrawl (3)\n                    JFE-SSD (2)                                              3.protected                                                                                        https://thenationalrobotarium.\n                                                                                 com/ai-empowered-fishing-n\n      Low                                                  High   et-to-help-prevent-marine-by\n                                                                                         catch/animals\nof                                                                               https://ecomagazine.com/ne\n                                                                                     ws/fisheries-aquaculture/sma\n                                                                                       rtrawl-ai-empowered-fishing-Types                                                                                    net-to-help-prevent-marine-b\n                                                                                       ycatch/\n\n                           Low"
+  },
+  {
+    "page": 18,
+    "text": "                                                                                            sources:\nComparison Chart\n\n                                                                                                                   1:\n                                              Turtle Excluder Device (2)     Smartrawl (1)      JFE-SSD (3)           Blue Catch\n\n                                                                                                          https://fisorg.uk/wp-content/uploads/2025/06/Smartra\n                                                                                                      wl-Phase-6-Report-Final-copy_2.pdf\n\n\n Smart identification/ sorting       ❌         ✅       ❌        ✅                                                                                                          https://marineguardian.eu/smartrawl-tackles-bycatch-\n                                                                                                             of-species/\n\n\n                                                                                                                   2:\n\n     Preventing bycatch         ✅         ✅       ✅        ✅\n                                                                                                              https://www.fisheries.noaa.gov/feature-story/gearing-t\n                                                                                                             urtle-excluder-devices-strengthen-fisheries-and-help-r\n                                                                                                             ecover-sea-turtle\n\n\n Underwater vision (through       ❌         ✅       ❌        ✅                                                                                                            https://www.fisheries.noaa.gov/southeast/bycatch/turt\n         camera)                                                                                       le-excluder-devices\n\n\n                                                                                                                   3:\n\n\n  3D model & educational        ❌         ❌       ❌        ✅        https://www.researchgate.net/publication/242019260\n                                                                                                       _Investigations_on_juvenile_fish_excluder_cum_shri         purposes\n                                                                                           mp_sorting_device_JFE-SSD"
+  },
+  {
+    "page": 19,
+    "text": "UVP/VVP of BlueCatch\n\n                 Daisy, Sophia, Leanne, Grace"
+  },
+  {
+    "page": 20,
+    "text": "                     Value Proposition\n\n For anglers who want to avoid accidentally hooking protected marine animals and learn\n  more about marine life, Blue Catch is an AI-powered smart fishing rod that identifies\n  nearby fish, automatically retracts its hooks when protected species are detected, and\ndisplays the animal’s photo, interactive 3D model, and fun facts to help prevent injuries to\n             marine life while making fishing safer and more educational."
+  },
+  {
+    "page": 21,
+    "text": "Visual Value Proposition"
+  },
+  {
+    "page": 22,
+    "text": " Guerilla Financial Pro Forma\n\nhttps://docs.google.com/spreadsheets/d/1PcS-zDE94jpFI5VOcXDihgA-AtQn\n               OXyXWg-bBoQf8Xo/edit?usp=sharing"
+  },
+  {
+    "page": 23,
+    "text": "Labor & manufacturing: Labor $102,076.52 + Factory $51,038.26 = $153,114.78\nOperations & distribution: Storage $18,000 + Rent $36,000 Packaging $1,880.36 + Shipping $32,906.25 Interest $12,000 + Platform $479.88 = $101,266.49"
+  }
+]
