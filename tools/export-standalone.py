@@ -28,10 +28,6 @@ html = html.replace(css_link[0], f"<style>{css}</style>")
 
 script_link = re.search(r'<script[^>]*src="([^"]+)"[^>]*></script>', html)
 script = (dist / script_link[1].lstrip("/")).read_text()
-# Vite emits the photographic motion atlas as a cacheable asset. Embed any image
-# URL constants in the compiled module so canvas actions also work offline.
-script = re.sub(r'''(["'])(/assets/[^"'\s]+\.(?:png|webp|svg))\1''',
-                lambda m: json.dumps(data_uri(m[2])), script)
 pages = [data_uri(f"/originals/page-{i:02}.webp") for i in range(1, 24)]
 script = "window.__BLUE_CATCH_PAGES__=" + json.dumps(pages) + ";\n" + script
 # Keep the compiled module deferred, after HTML parsing just like Vite's entry.
