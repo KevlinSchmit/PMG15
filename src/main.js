@@ -33,7 +33,8 @@ let current = 0;
 let busy = false;
 let sceneTimer;
 const initialSlide = Number(location.hash.match(/^#slide-(\d+)$/)?.[1]) - 1;
-if (Number.isInteger(initialSlide) && initialSlide >= 0 && initialSlide < slides.length) current = initialSlide;
+const refreshed = performance.getEntriesByType('navigation')[0]?.type === 'reload';
+if (!refreshed && Number.isInteger(initialSlide) && initialSlide >= 0 && initialSlide < slides.length) current = initialSlide;
 
 function fitStage() {
   const portrait = innerWidth < 700 && innerHeight > innerWidth;
