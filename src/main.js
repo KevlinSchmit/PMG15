@@ -3,7 +3,7 @@ import './scene.css';
 import './charts.css';
 import './motion.css';
 import { mountScenes, mountCharts } from './visuals.js';
-import { prepareMotion, enterSlide, stopEntrances, transitionSlides } from './motion.js';
+import { prepareMotion, enterSlide, stopEntrances, transitionSlides, finishTransition } from './motion.js';
 import { marketContent, interviews } from './content.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -83,7 +83,7 @@ function showSlide(index) {
     }
   }
   enterSlide(slide, current, () => paused || reduceMotion.matches);
-  // Decode nearby source art before it appears in a transition.
+  // Decode nearby original diagrams before the next scene is revealed.
   for (const neighbour of [slides[current], slides[current + 1]]) {
     if (neighbour) $$('img', neighbour).forEach(image => { image.loading = 'eager'; image.decode?.().catch(() => {}); });
   }
@@ -140,7 +140,7 @@ function setMotion(value) {
   if (paused) {
     clearTimeout(sceneTimer);
     stopEntrances();
-    transition.getAnimations({ subtree: true }).forEach(animation => { try { animation.finish(); } catch {} });
+    finishTransition();
     const scene = slides[current].querySelector('.deep-scene');
     if (scene) scene.dataset.encounter = slides[current].id === 'protected-encounter' ? 'protected' : 'fishing';
   } else enterSlide(slides[current], current, () => paused || reduceMotion.matches);

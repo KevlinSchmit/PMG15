@@ -1,4 +1,4 @@
-# Blue Catch — interactive presentation
+# Blue Catch — interactive motion story
 
 A responsive, animated, 27-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The original interviews have separate slides for readability. Two consecutive underwater scenes demonstrate species recognition and hook retraction. At the user's request, the market and funding charts are redrawn in the presentation's palette, and the lure and turtle use detailed vector illustrations. The source wording, figures, and calculation inconsistencies are preserved; original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
 
@@ -24,7 +24,8 @@ To create a single downloadable presentation that opens directly in a browser, r
 - Click the slide background, press **Right Arrow**, or press **Space** for the next slide. **Left Arrow** or **Shift + Space** goes back. Buttons, links, and zoomable diagrams keep their own interactions.
 - Use **Home** / **End** for the first / final slide. The final slide's next button restarts the presentation.
 - Swipe left / right on touch screens. The page does not scroll, and there is no top navigation.
-- All 27 slides have different content-based outgoing transitions: title magnification, mind-map folding, statistic zoom, chip tiles, rod casting, camera immersion, turtle swimming, graph flight, orbit expansion, quote movement, number effects, axis rotation, table ripples, photo panning, and a donut portal. Text and graphics have staggered entrances, plus gentle idle movement.
+- Scenes use topic-related illustrated objects to carry their transitions: schools of fish, branching coral, a releasing net, chip signals, casting lines, sonar, a swimming turtle, compass routes, market fleets, listening waves, a marine shield, and funding coins. Headings and body text stay at a fixed size and position, with a short dissolve. There are no cloned text zooms, spinning screenshots, or word-by-word entrances.
+- The same transparent vector objects appear in available scene margins and travel into the transition. Chapter openings give them more space. Dense portrait layouts omit decoration where it would overlap reading. The camera scene extends into its environment, and stays aligned while the turtle encounter begins.
 - Use the fullscreen icon at bottom right, or press **F**. Escape exits fullscreen.
 - Slide 7 shows the camera lure scanning. Advance normally to slide 8: the turtle approaches, both hooks retract, tracking appears, and the float lights up. No special control or timed auto-advance is required. Going back restores the scanning state.
 - The TAM/SAM/SOM chart builds its nested circles and reveals the original market figures. The funds chart draws its four donut segments and reveals the original amounts. Both retain an **Original graphic** link.
@@ -36,10 +37,10 @@ To create a single downloadable presentation that opens directly in a browser, r
 
 ## Content fidelity
 
-`public/Blue-Catch-Pitch-Deck.pdf` is an unchanged copy of the provided PDF. `public/originals/` contains faithful page renders for the source viewer. `public/assets/` contains images extracted from the PDF; `original-waves.svg` preserves the cover's original vector wave artwork. `public/deck-content.json` preserves the extracted source text by page. No external image generation or stock imagery is used. All fonts and assets are served locally.
+`public/Blue-Catch-Pitch-Deck.pdf` is an unchanged copy of the provided PDF. `public/originals/` contains faithful page renders for the source viewer. `public/assets/` contains images extracted from the PDF; `original-waves.svg` preserves the cover's original vector wave artwork. `public/deck-content.json` preserves the extracted source text by page. `src/scene-art.js` contains the new decorative vector illustrations; they are separate from the original diagrams and data. No stock imagery is used. All fonts and assets are served locally.
 
 The page keeps the deck's stated market values and arithmetic exactly as supplied; it does not validate or correct the business assumptions. The original image-based SWOT, mind maps, strategy chart, market infographic, value proposition, and financial graphic are available at full size.
 
 ## Browser checks
 
-Run `npm test` for the Playwright regression suite. It checks refresh playback, the two-step turtle encounter, every outgoing transition, slide focus, exact chart values, original-image access, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
+Run `npm test` for the Playwright regression suite. It checks refresh playback, the two-step turtle encounter, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
