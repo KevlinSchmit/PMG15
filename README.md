@@ -1,6 +1,6 @@
 # Blue Catch — interactive motion story
 
-A responsive, animated, 27-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The original interviews have separate slides for readability. Two consecutive underwater scenes demonstrate species recognition and hook retraction. At the user's request, the market and funding charts are redrawn in the presentation's palette, and the lure and turtle use detailed vector illustrations. The source wording, figures, and calculation inconsistencies are preserved; original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
+A responsive, animated, 22-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The original interviews have separate slides for readability. Two consecutive underwater scenes demonstrate species recognition and hook retraction. At the user's request, the market and funding charts are redrawn in the presentation's palette, and the lure and turtle use detailed vector illustrations. The source wording, figures, and calculation inconsistencies are preserved; original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
 
 ## Run
 

@@ -11,7 +11,6 @@ const profiles = {
   'in-action': ['continuous-underwater-encounter', 'sonar', 'hidden', 'encounter'],
   'protected-encounter': ['protected-turtle-departure', 'turtle', 'hidden', 'turtle'],
   strategy: ['strategy-compass-route', 'route', 'corner', 'route'],
-  market: ['market-fleet-underway', 'fleet', 'divider', 'fleet'],
   'market-overview': ['market-school-circulation', 'school', 'footer', 'school'],
   'interview-1': ['fisher-voice-ripples', 'listening', 'interview', 'sound'],
   'interview-2': ['learning-voice-response', 'listening', 'interview', 'echo'],
@@ -19,15 +18,11 @@ const profiles = {
   tam: ['total-market-fleet-crossing', 'fleet', 'footer', 'fleet'],
   sam: ['serviceable-market-sonar', 'sonar', 'footer', 'sonar'],
   som: ['obtainable-market-fish-track', 'focus', 'footer', 'track'],
-  competition: ['competition-sonar-survey', 'sonar', 'divider', 'sonar'],
-  definition: ['product-lure-deployment', 'lure', 'corner', 'drop'],
   swot: ['swot-branching-paths', 'coral', 'corner', 'branches'],
   landscape: ['landscape-course-chart', 'route', 'corner', 'route'],
   comparison: ['comparison-circuit-connect', 'chip', 'footer', 'signal'],
-  uvp: ['marine-shield-current', 'shield', 'divider', 'shield'],
   value: ['protected-fish-release', 'turtle', 'value', 'turtle'],
   'visual-value': ['camera-field-of-view', 'focus', 'corner', 'scan'],
-  financials: ['funding-coins-distribute', 'funds', 'divider', 'coins'],
   funds: ['funding-return-to-ocean', 'funds', 'footer', 'return']
 };
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
