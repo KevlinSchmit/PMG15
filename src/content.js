@@ -28,29 +28,3 @@ export const marketContent = {
       <div class="calculation">SOM = 1,140,000 * 52% * 1% * $199 = <strong>$1,179,672</strong></div>`
   }
 };
-
-export const interviews = [
-  {
-    label: '#1 Interviewee: professional fisher / Interview date: September 26, 2026',
-    points: [
-      'Agreed the idea of using a camera and AI to identify fish before they are hooked is really useful',
-      'He liked that the system would immediately retract the hooks when it detects a protected species rather than relying on humans to recognize the animal after the damage already happened.',
-      'However, he was concerned about how accurately the AI could identify fish underwater, especially in low-light conditions. In addition, he was more interested if the product offered everyday fishing benefits.'
-    ]
-  },
-  {
-    label: '#2: Interviewee: occasional fisher / Interview date: September 27, 2026',
-    points: [
-      'The interviewee doesn’t fish too often, but she liked how the concept adds a layer of education to fishing.',
-      'She thought showing the protected fishes on screen with 3D models and fun facts could make fishing more interesting for people who are not experienced anglers.',
-      'concerned that the technology might be complicated for people who are not familiar with more technical devices (such as seniors), so she suggested making the interface simple and easy to understand.'
-    ]
-  },
-  {
-    label: '#3: Interviewee: amateur fishing hobbyist / Interview date: September 29, 2026',
-    points: [
-      'Passionate about fishing and is interested in the concept. He has personal experience on the issue, where he had accidentally caught an endangered species while fishing and had to set it free, though it was already injured and likely had a hard time surviving afterwards.',
-      'Interviewee also mentioned that he would prefer to see the camera’s view on the screen, as it would help him see if there is actually any fish in that location.'
-    ]
-  }
-];

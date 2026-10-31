@@ -4,7 +4,7 @@ import './charts.css';
 import './motion.css';
 import { mountScenes, mountCharts } from './visuals.js';
 import { prepareMotion, enterSlide, stopEntrances, transitionSlides, finishTransition } from './motion.js';
-import { marketContent, interviews } from './content.js';
+import { marketContent } from './content.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -15,15 +15,8 @@ try { localStorage.removeItem('blue-catch-motion'); } catch {}
 mountScenes();
 mountCharts();
 
-// Each calculation and interview is a separate slide, with all original wording.
+// Each calculation is a separate slide, with all original wording.
 $$('[data-calculation]').forEach(panel => { panel.innerHTML = marketContent[panel.dataset.calculation].html; });
-$$('[data-interview-content]').forEach(panel => {
-  const interview = interviews[Number(panel.dataset.interviewContent)];
-  const label = document.createElement('p'); label.className = 'interview-label mono'; label.textContent = interview.label;
-  const list = document.createElement('ul');
-  interview.points.forEach(point => { const item = document.createElement('li'); item.textContent = point; list.append(item); });
-  panel.append(label, list);
-});
 
 const slides = $$('.slide');
 prepareMotion(slides);

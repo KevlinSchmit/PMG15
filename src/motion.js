@@ -3,18 +3,12 @@ import { mountSceneArt, sceneArt } from './scene-art.js';
 // A cut belongs to its subject. Dense pages keep their objects in the margins.
 const profiles = {
   surface: ['surface-school-departure', 'school', 'hero', 'school'],
-  finding: ['ideas-coral-connect', 'coral', 'map', 'branches'],
-  defining: ['problem-path-trace', 'route', 'map', 'route'],
   challenge: ['bycatch-net-release', 'net', 'footer', 'net'],
   drivers: ['technology-signal-relay', 'chip', 'footer', 'signal'],
   solution: ['smart-lure-line-cast', 'lure', 'corner', 'cast'],
   'in-action': ['continuous-underwater-encounter', 'sonar', 'hidden', 'encounter'],
   'protected-encounter': ['protected-turtle-departure', 'turtle', 'hidden', 'turtle'],
-  strategy: ['strategy-compass-route', 'route', 'corner', 'route'],
   'market-overview': ['market-school-circulation', 'school', 'footer', 'school'],
-  'interview-1': ['fisher-voice-ripples', 'listening', 'interview', 'sound'],
-  'interview-2': ['learning-voice-response', 'listening', 'interview', 'echo'],
-  'interview-3': ['hobbyist-camera-scan', 'focus', 'interview', 'scan'],
   tam: ['total-market-fleet-crossing', 'fleet', 'footer', 'fleet'],
   sam: ['serviceable-market-sonar', 'sonar', 'footer', 'sonar'],
   som: ['obtainable-market-fish-track', 'focus', 'footer', 'track'],
