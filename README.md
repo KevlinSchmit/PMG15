@@ -1,6 +1,6 @@
 # Blue Catch — interactive motion story
 
-A responsive, animated, 22-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The original interviews have separate slides for readability. Two consecutive underwater scenes demonstrate species recognition and hook retraction. At the user's request, the market and funding charts are redrawn in the presentation's palette, and the lure and turtle use detailed vector illustrations. The source wording, figures, and calculation inconsistencies are preserved; original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
+A responsive, animated, 16-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. Two consecutive underwater scenes demonstrate species recognition and hook retraction. At the user's request, the market and funding charts are redrawn in the presentation's palette, and the lure and turtle use detailed vector illustrations. The source wording, figures, and calculation inconsistencies are preserved; original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
 
 ## Run
 
@@ -27,9 +27,9 @@ To create a single downloadable presentation that opens directly in a browser, r
 - Scenes use topic-related illustrated objects to carry their transitions: schools of fish, branching coral, a releasing net, chip signals, casting lines, sonar, a swimming turtle, compass routes, market fleets, listening waves, a marine shield, and funding coins. Headings and body text stay at a fixed size and position, with a short dissolve. There are no cloned text zooms, spinning screenshots, or word-by-word entrances.
 - The same transparent vector objects appear in available scene margins and travel into the transition. Chapter openings give them more space. Dense portrait layouts omit decoration where it would overlap reading. The camera scene extends into its environment, and stays aligned while the turtle encounter begins.
 - Use the fullscreen icon at bottom right, or press **F**. Escape exits fullscreen.
-- Slide 7 shows the camera lure scanning. Advance normally to slide 8: the turtle approaches, both hooks retract, tracking appears, and the float lights up. No special control or timed auto-advance is required. Going back restores the scanning state.
+- Slide 5 shows the camera lure scanning. Advance normally to slide 6: the turtle approaches, both hooks retract, tracking appears, and the float lights up. No special control or timed auto-advance is required. Going back restores the scanning state.
 - The TAM/SAM/SOM chart builds its nested circles and reveals the original market figures. The funds chart draws its four donut segments and reveals the original amounts. Both retain an **Original graphic** link.
-- TAM, SAM, SOM, and each interview have their own complete slides.
+- TAM, SAM, and SOM each have their own complete slide.
 - Open original diagrams and zoom to 400% for details.
 - The original-deck icon opens all 23 source pages, with keyboard navigation and a PDF download. **Sources** opens the original chart citations.
 - The pause icon stops motion and makes slide changes immediate for the current visit. Refresh starts motion again unless the system requests reduced motion. A prior saved pause no longer silently disables animation. Reduced motion shows all final chart values and encounter states immediately.
