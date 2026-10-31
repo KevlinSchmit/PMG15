@@ -5,6 +5,7 @@ import './product.css';
 import './scene.css';
 import './charts.css';
 import './motion.css';
+import { mountProduct } from './product-3d.js';
 import { mountScenes, mountCharts } from './visuals.js';
 import { prepareMotion, enterSlide, stopEntrances, transitionSlides, finishTransition } from './motion.js';
 
@@ -21,6 +22,8 @@ const slides = $$('.slide');
 prepareMotion(slides);
 const stage = $('.slide-stage');
 const transition = $('.transition-ocean');
+const product = mountProduct($('#product-360'));
+product.setPaused(paused);
 let current = 0;
 let busy = false;
 let sceneTimer;
@@ -75,6 +78,8 @@ function showSlide(index) {
       else sceneTimer = setTimeout(() => { scene.dataset.encounter = 'protected'; }, 120);
     }
   }
+  product.setActive(slide.id === 'product-360');
+  if(slide.id === 'solution') product.prepareMorph();
   enterSlide(slide, current, () => paused || reduceMotion.matches);
   // Decode nearby original diagrams before the next scene is revealed.
   for (const neighbour of [slides[current], slides[current + 1]]) {
@@ -86,7 +91,7 @@ async function goTo(index) {
   if (index === current || busy || document.querySelector('dialog[open]')) return;
   clearTimeout(sceneTimer);
   stopEntrances();
-  if (paused || reduceMotion.matches) { showSlide(index); return; }
+  if (paused || reduceMotion.matches) { product.endMorph();showSlide(index);return; }
   busy = true;
   document.body.classList.add('is-transitioning');
   try {
@@ -99,6 +104,7 @@ async function goTo(index) {
     busy = false;
     document.body.classList.remove('is-transitioning');
     stage.classList.remove('changing');
+    if(slides[current].id === 'product-360') product.endMorph();
   }
 }
 showSlide(current);
@@ -124,6 +130,7 @@ $('#presentation').addEventListener('touchend', event => {
 
 function setMotion(value) {
   paused = value;
+  product.setPaused(value);
   document.body.classList.toggle('motion-paused', paused);
   const button = $('.motion-toggle');
   button.setAttribute('aria-pressed', String(paused));

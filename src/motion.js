@@ -5,7 +5,7 @@ const profiles = {
   surface: ['surface-school-departure', 'school', 'hero', 'school'],
   challenge: ['bycatch-net-release', 'net', 'footer', 'net'],
   drivers: ['technology-signal-relay', 'chip', 'footer', 'signal'],
-  solution: ['smart-lure-line-cast', 'lure', 'corner', 'cast'],
+  solution: ['blueprint-to-product', 'lure', 'corner', 'blueprint'],
   'product-360': ['product-orbit-study', 'focus', 'corner', 'orbit'],
   'market-overview': ['market-school-circulation', 'school', 'footer', 'school'],
   swot: ['swot-branching-paths', 'coral', 'corner', 'branches'],
@@ -57,6 +57,9 @@ export async function enterSlide(slide, index, paused) {
   // Reading stays still. Only a quiet dissolve, never word-by-word zooms or rotations.
   slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape,.problem-thesis,.next-step-lead,.next-step-proof,.net-vision').forEach(element => {
     if (element.parentElement.closest('.map-heading,.calculation-content')) return;
+    // Fading this transparent wrapper isolates the multiply-blended PNG and
+    // exposes its white paper. Keep the drawing in the slide's paint context.
+    if(element.matches('#solution .sketch-button')) return;
     play(element, [{ opacity: 0 }, { opacity: 1 }], { duration: 420, delay: 40 });
   });
   const object = slide.querySelector('.scene-object');
@@ -121,6 +124,7 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   overlay.classList.add('play');
   overlay.classList.toggle('backwards', backwards);
   const animations = [];
+  const cleanups = [];
   let finishRequested = false;
   let releaseCut;
   const interrupted = new Promise(resolve => { releaseCut = resolve; });
@@ -146,7 +150,22 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   };
   try {
     const encounter = [outgoing.id, incoming.id].every(id => ['in-action', 'protected-encounter'].includes(id));
-    if (encounter) {
+    if (outgoing.id === 'solution' && incoming.id === 'product-360') {
+      const source=outgoing.querySelector('.sketch-button img');
+      outgoing.classList.add('is-morph-source');incoming.classList.add('is-morph-target');
+      cleanups.push(()=>{outgoing.classList.remove('is-morph-source');incoming.classList.remove('is-morph-target');});
+      // Dissolve the real sketch in its own background; no copied white bitmap.
+      // The native model is held at the same calibrated pose until this cut ends.
+      animate(source,[{opacity:1},{opacity:0}],{duration:750,delay:100});
+      outgoing.querySelectorAll('.slide-kicker,h2,.solution-features,.scene-object,.expand-icon').forEach(element=>{
+        animate(element,[{opacity:getComputedStyle(element).opacity},{opacity:0}],{duration:250});
+      });
+      animate(incoming.querySelector('#rod-viewport'),[{opacity:0},{opacity:1}],{duration:750,delay:100});
+      animate(incoming.querySelector('.product-copy'),[{opacity:0},{opacity:1}],{duration:450,delay:250});
+      animate(incoming.querySelector('.product-angle'),[{opacity:0},{opacity:1}],{duration:250,delay:700});
+      animate(incoming.querySelector('.slide-kicker'),[{opacity:0},{opacity:.55}],{duration:250,delay:180});
+      await Promise.race([sleep(100),interrupted]);swapOnce();
+    } else if (encounter) {
       const camera = holdCamera(outgoing, overlay);
       animate(outgoing.querySelector('.demo-aside'), [{ opacity: 1 }, { opacity: 0 }], { duration: 180 });
       await Promise.race([sleep(180), interrupted]);
@@ -233,6 +252,7 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   } finally {
     swapOnce();
     finishCut = undefined;
+    cleanups.forEach(cleanup=>cleanup());
     animations.forEach(animation => animation.cancel());
     outgoing.classList.remove('is-departing');
     if (carriedSource) carriedSource.style.visibility = sourceVisibility;

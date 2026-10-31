@@ -15,21 +15,44 @@
 }
 
 .product-stage {
-  position: relative;
-  align-self: center;
-  width: 100%;
-  aspect-ratio: 850 / 650;
-  overflow: hidden;
+  position: absolute;
+  left: 74px;
+  top: 220px;
+  width: 500px;
+  height: 520px;
+  overflow: visible;
   isolation: isolate;
 }
 
-.product-model-embed {
+#rod-viewport {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  border: 0;
-  background: #e8f1ec;
+  cursor: grab;
+  touch-action: none;
+}
+
+#rod-viewport.is-dragging { cursor: grabbing; }
+#rod-viewport canvas { display: block; width: 100%; height: 100%; }
+.product-loading { position: absolute; inset: 45% 5% auto; text-align: center; font-size: 11px; }
+.product-loading[hidden] { display: none; }
+.product-angle { position: absolute; left: 0; top: -30px; font-size: 12px; opacity: .5; }
+.product-controls { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.product-controls button { font: 12px 'DM Mono', monospace; color: #245d64; padding: 10px 3px; border-bottom: 1px solid #2d6d7460; }
+.product-controls button:hover { color: #173b39; border-color: #173b39; }
+.product-controls button[aria-pressed="true"] { background: #b8d1c066; }
+.product-controls #rod-detail { padding: 10px 12px; border: 1px solid #2d6d7460; border-radius: 3px; background: #f3f4e966; }
+.portrait .product-controls button { font-size: 17px; padding-top: 13px; padding-bottom: 13px; }
+
+/* Only the model changes material during the cut; its image slot stays fixed. */
+.solution-layout .sketch-button { background: transparent; border-color: transparent; }
+.solution-layout .sketch-button img { mix-blend-mode: multiply; }
+.product-slide.is-morph-target { background: transparent; }
+.slide.is-morph-source { visibility: visible; opacity: 1; pointer-events: none; }
+
+.product-copy {
+  grid-column: 2;
 }
 
 .product-copy {
@@ -44,9 +67,9 @@
 }
 
 .product-copy h2 {
-  margin: 18px 0 20px;
-  font-size: 76px;
-  line-height: .98;
+  margin: 14px 0 16px;
+  font-size: 64px;
+  line-height: 1.04;
   letter-spacing: -.05em;
 }
 
@@ -57,7 +80,7 @@
 .product-intro {
   max-width: 520px;
   color: #4d6c6a;
-  font-size: 27px;
+  font-size: 23px;
   line-height: 1.42;
   letter-spacing: -.02em;
 }
@@ -65,7 +88,7 @@
 .product-details {
   display: grid;
   gap: 0;
-  margin: 24px 0 18px;
+  margin: 18px 0 12px;
   padding: 0;
   list-style: none;
 }
@@ -75,7 +98,7 @@
   grid-template-columns: 30px 1fr;
   gap: 14px;
   margin: 0;
-  padding: 13px 0;
+  padding: 10px 0;
   border-top: 1px solid #2d5a5625;
 }
 
@@ -88,7 +111,7 @@
 .product-details h3 {
   margin: 0 0 3px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
   line-height: 1.18;
   letter-spacing: -.025em;
@@ -97,16 +120,15 @@
 .product-details p {
   max-width: 475px;
   color: #4d6c6a;
-  font-size: 22px;
+  font-size: 19px;
   line-height: 1.4;
 }
 
 .product-motion-note {
   display: inline-block;
-  padding-top: 10px;
-  border-top: 1px solid #2d6d7460;
+  padding-top: 8px;
   color: #245d64;
-  font-size: 14px;
+  font-size: 12px;
   letter-spacing: .08em;
 }
 
@@ -119,22 +141,15 @@
 }
 
 .portrait .product-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: auto 590px;
-  align-content: center;
-  gap: 24px;
-  height: 1225px;
+  display: block;
+  height: auto;
 }
 
 .portrait .product-copy {
-  grid-row: 1;
-}
-
-.portrait .product-stage {
-  grid-row: 2;
-  justify-self: center;
-  width: 770px;
+  position: absolute;
+  left: 375px;
+  right: 55px;
+  top: 245px;
 }
 
 .portrait .product-copy > .overline {
@@ -143,15 +158,15 @@
 
 .portrait .product-copy h2 {
   margin: 16px 0 18px;
-  font-size: 76px;
+  font-size: 59px;
 }
 
 .portrait .product-copy h2 br {
-  display: none;
+  display: block;
 }
 
 .portrait .product-copy h2 em {
-  margin-left: 12px;
+  margin-left: 0;
 }
 
 .portrait .product-intro {
@@ -160,14 +175,14 @@
 }
 
 .portrait .product-details {
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
+  grid-template-columns: 1fr;
+  gap: 14px;
   margin: 25px 0 18px;
 }
 
 .portrait .product-details > li {
-  grid-template-columns: 1fr;
-  gap: 4px;
+  grid-template-columns: 25px 1fr;
+  gap: 10px;
   padding: 16px 0 0;
 }
 

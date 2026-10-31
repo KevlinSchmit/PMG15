@@ -274,9 +274,10 @@ export function mountProduct(slide) {
   const detailButton=slide.querySelector('#rod-detail');
   detailButton.addEventListener('click',()=>{
     detail=!detail;detailButton.setAttribute('aria-pressed',String(detail));
-    detailButton.textContent=detail?'− FULL VIEW':'+ DETAIL VIEW';resize();
+    detailButton.textContent=detail?'− FULL VIEW':'＋ CLOSE UP';
+    detailButton.setAttribute('aria-label',detail?'Full view':'Close up');resize();
   });
-  slide.querySelector('#rod-reset').addEventListener('click',()=>{angle=initialAngle;tilt=0;detail=false;detailButton.setAttribute('aria-pressed','false');detailButton.textContent='+ DETAIL VIEW';resize();});
+  slide.querySelector('#rod-reset').addEventListener('click',()=>{angle=initialAngle;tilt=0;detail=false;detailButton.setAttribute('aria-pressed','false');detailButton.textContent='＋ CLOSE UP';detailButton.setAttribute('aria-label','Close up');resize();});
   host.addEventListener('pointerdown',event=>{drag={x:event.clientX,y:event.clientY,angle,tilt};host.setPointerCapture(event.pointerId);host.classList.add('is-dragging');});
   host.addEventListener('pointermove',event=>{
     if(!drag)return;
@@ -289,7 +290,7 @@ export function mountProduct(slide) {
   for(const type of ['click','touchstart','touchend'])host.addEventListener(type,event=>event.stopPropagation());
   document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden&&!frame){last=performance.now();render(last);}});
   return {
-    prepareMorph(){morphing=true;host.dataset.morphing='true';angle=initialAngle;tilt=0;detail=false;dirty=true;init();resize();},
+    prepareMorph(){morphing=true;host.dataset.morphing='true';angle=initialAngle;tilt=0;detail=false;detailButton.setAttribute('aria-pressed','false');detailButton.setAttribute('aria-label','Close up');detailButton.textContent='＋ CLOSE UP';dirty=true;init();resize();},
     endMorph(){morphing=false;host.dataset.morphing='false';last=performance.now();},
     setActive(value){active=value;if(value){init();resize();if(!frame){last=performance.now();render(last);}}else{cancelAnimationFrame(frame);frame=0;}},
     setPaused(value){paused=value;}

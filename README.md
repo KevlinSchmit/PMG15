@@ -27,6 +27,7 @@ To create a single downloadable presentation that opens directly in a browser, r
 - Scenes use topic-related illustrated objects to carry their transitions: schools of fish, branching coral, a releasing net, chip signals, casting lines, sonar, a swimming turtle, compass routes, market fleets, listening waves, a marine shield, and funding coins. Headings and body text stay at a fixed size and position, with a short dissolve. There are no cloned text zooms, spinning screenshots, or word-by-word entrances.
 - The same transparent vector objects appear in available scene margins and travel into the transition. Chapter openings give them more space. Dense portrait layouts omit decoration where it would overlap reading.
 - Use the fullscreen icon at bottom right, or press **F**. Escape exits fullscreen.
+- Slide 4 keeps the concept drawing against the slide background. It dissolves into the 3D model on slide 5 at the same size, position and angle; rotation begins after the transition. Use **Close up** to magnify details, **Full view** to return, or pause and reset the model.
 - The TAM/SAM/SOM chart builds its nested circles and reveals the original market figures. The funds chart draws its four donut segments and reveals the original amounts. Both retain an **Original graphic** link.
 - TAM, SAM, and SOM are summarized together on one market slide.
 - Open original diagrams and zoom to 400% for details.
@@ -42,4 +43,4 @@ The page keeps the deck's stated market values and arithmetic exactly as supplie
 
 ## Browser checks
 
-Run `npm test` for the Playwright regression suite. It checks refresh playback, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
+Run `npm test` for the Playwright regression suite. It checks the aligned sketch-to-model transition, background blending and Close up magnification on desktop and portrait, refresh playback, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
