@@ -1,11 +1,13 @@
 import { mountSceneArt, sceneArt } from './scene-art.js';
+import { waterSweep } from './water-transition.js';
 
 // A cut belongs to its subject. Dense pages keep their objects in the margins.
 const profiles = {
-  surface: ['surface-school-departure', 'school', 'hero', 'school'],
+  surface: ['breaking-cover-wave', 'school', 'hero', 'breaking-wave'],
   challenge: ['bycatch-net-release', 'net', 'footer', 'net'],
   drivers: ['technology-signal-relay', 'chip', 'footer', 'signal'],
-  solution: ['smart-lure-line-cast', 'lure', 'corner', 'cast'],
+  solution: ['blueprint-to-product', 'lure', 'corner', 'blueprint'],
+  'product-360': ['product-orbit-to-vision', 'focus', 'hidden', 'orbit'],
   'in-action': ['continuous-underwater-encounter', 'sonar', 'hidden', 'encounter'],
   'protected-encounter': ['protected-turtle-departure', 'turtle', 'hidden', 'turtle'],
   'market-overview': ['market-school-circulation', 'school', 'footer', 'school'],
@@ -124,6 +126,7 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   overlay.classList.add('play');
   overlay.classList.toggle('backwards', backwards);
   const animations = [];
+  const cleanups = [];
   let finishRequested = false;
   let releaseCut;
   const interrupted = new Promise(resolve => { releaseCut = resolve; });
@@ -149,13 +152,64 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   };
   try {
     const encounter = [outgoing.id, incoming.id].every(id => ['in-action', 'protected-encounter'].includes(id));
-    if (encounter) {
+    if (cut === 'breaking-wave') {
+      cleanups.push(waterSweep(overlay, animate, { full: true, duration: 2200, backwards: !backwards }));
+      // The crest reaches each original cover element before carrying it away.
+      // No screenshot of the page: these are the actual independent objects.
+      const targets = outgoing.querySelectorAll('h1>.word,.hero-caption,.start-button,.hero-rod,.hero-sun,.floating-label,.hero-authors,.depth-marker,.scene-object,.slide-kicker');
+      for (const [i, element] of [...targets].entries()) {
+        const rect = element.getBoundingClientRect();
+        const hit = Math.max(180, Math.min(940, 360 + (1 - rect.right / innerWidth) * 560));
+        animate(element, [
+          { opacity: 1, transform: 'translate3d(0,0,0) rotate(0)', filter: 'blur(0px)' },
+          { opacity: .9, transform: `translate3d(${-innerWidth*.12}px,${-35-i%3*18}px,0) rotate(${i%2?-8:5}deg)`, offset: .28, filter: 'blur(1px)' },
+          { opacity: 0, transform: `translate3d(${-innerWidth*.95}px,${(i%3-1)*innerHeight*.3}px,0) rotate(${i%2?-32:19}deg)`, filter: 'blur(7px)' }
+        ], { duration: 850, delay: hit, easing: 'cubic-bezier(.45,0,.8,.5)' });
+      }
+      animate(outgoing.querySelector('.hero-waves'), [
+        { transform: 'translate(0,0) scale(1)', opacity: 1 },
+        { transform: 'translate(-8%,-25%) scale(1.35)', opacity: .8, offset: .35 },
+        { transform: 'translate(-90%,-80%) scale(2)', opacity: 0 }
+      ], { duration: 1300 });
+      outgoing.classList.add('is-departing');
+      animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { delay: 900, duration: 300 });
+      await Promise.race([sleep(1020), interrupted]);
+      swapOnce();
+      animate(incoming, [{ opacity: 0 }, { opacity: 1 }], { duration: 500 });
+    } else if (cut === 'blueprint' && incoming.id === 'product-360') {
+      cleanups.push(waterSweep(overlay, animate, { duration: 1600 }));
+      const source = outgoing.querySelector('.sketch-button');
+      const rect = source.getBoundingClientRect();
+      const destination = incoming.querySelector('.product-stage').getBoundingClientRect();
+      const sketch = document.createElement('div');
+      sketch.className = 'transition-blueprint';
+      sketch.style.cssText = `left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;`;
+      sketch.append(source.querySelector('img').cloneNode());overlay.append(sketch);
+      animate(sketch, [
+        { opacity: .8, transform: 'translate(0,0) scale(1)', filter: 'grayscale(1)' },
+        { opacity: .5, transform: `translate(${destination.left-rect.left+(destination.width-rect.width)/2}px,${destination.top-rect.top}px) scale(1.05)`, filter: 'grayscale(1) contrast(1.5)', offset: .55 },
+        { opacity: 0, transform: `translate(${destination.left-rect.left+(destination.width-rect.width)/2}px,${destination.top-rect.top}px) scale(1.08)`, filter: 'grayscale(0) blur(5px)' }
+      ], { duration: 1500 });
+      animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { duration: 450 });
+      await Promise.race([sleep(400), interrupted]);
+      swapOnce();
+      animate(incoming, [{ opacity: 0 }, { opacity: 1 }], { duration: 850 });
+      animate(incoming.querySelector('#rod-viewport'), [
+        { clipPath: 'inset(0 100% 0 0)', filter: 'brightness(1.8)' },
+        { clipPath: 'inset(0 0% 0 0)', filter: 'brightness(1)' }
+      ], { duration: 1050, delay: 150 });
+      const scanner = document.createElement('div');scanner.className='product-scan';overlay.append(scanner);
+      scanner.style.cssText=`top:${destination.top}px;height:${destination.height}px;left:${destination.left}px;`;
+      animate(scanner,[{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.2},{transform:`translateX(${destination.width}px)`,opacity:0}],{duration:1200,delay:400});
+    } else if (encounter) {
+      cleanups.push(waterSweep(overlay, animate, { duration: 950, deep: true, backwards }));
       const camera = holdCamera(outgoing, overlay);
       animate(outgoing.querySelector('.demo-aside'), [{ opacity: 1 }, { opacity: 0 }], { duration: 180 });
       await Promise.race([sleep(180), interrupted]);
       swapOnce();
       animate(camera, [{ opacity: 1 }, { opacity: 0 }], { duration: 230 });
     } else {
+      cleanups.push(waterSweep(overlay, animate, { duration: 1200, backwards, deep: outgoing.dataset.theme === 'deep' }));
       outgoing.classList.add('is-departing');
       const object = carryObject(outgoing, overlay, art);
       carriedSource = outgoing.querySelector('.scene-object');
@@ -191,19 +245,19 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
         net.style.transformOrigin = '50% 0';
         animate(net, [{ opacity: 1, transform: 'rotate(0)' }, { opacity: 0, transform: 'translateY(-200px) rotate(-22deg)' }]);
         depart(distance * .6, -60);
-      } else if (['cast', 'drop'].includes(cut)) {
+      } else if (['cast', 'drop', 'blueprint'].includes(cut)) {
         const x = parseFloat(object.style.left), y = parseFloat(object.style.top);
-        object.style.offsetPath = cut === 'cast'
+        object.style.offsetPath = cut !== 'drop'
           ? `path("M0 0C${-x*.5} ${-y*.8} ${innerWidth*.35} ${-y*.5} ${distance*.7} ${innerHeight*.5}")`
           : `path("M0 0C-30 60 35 180 0 ${innerHeight}")`;
         object.style.offsetRotate = '0deg';
         animate(object, [{ offsetDistance: '0%', opacity: 1 }, { offsetDistance: '100%', opacity: 0 }]);
         draw(makeField(overlay, '<g class="cut-cast"><path d="M0 720Q480-220 1110 280T1540 810"/></g>'));
-      } else if (['sonar', 'scan', 'track', 'shield'].includes(cut)) {
+      } else if (['sonar', 'scan', 'track', 'shield', 'orbit'].includes(cut)) {
         depart(0, -25);
-        if (cut === 'sonar') for (let i = 0; i < 3; i++) {
+        if (cut === 'sonar' || cut === 'orbit') for (let i = 0; i < 3; i++) {
           const ring = document.createElement('div'); ring.className = 'transition-sonar'; overlay.append(ring);
-          animate(ring, [{ transform: 'translate(-50%,-50%) scale(.15)', opacity: 0 }, { opacity: .5, offset: .25 }, { transform: 'translate(-50%,-50%) scale(1.5)', opacity: 0 }], { delay: i*100 });
+          animate(ring, [{ transform: 'translate(-50%,-50%) rotateX(55deg) scale(.15)', opacity: 0 }, { opacity: .5, offset: .25 }, { transform: 'translate(-50%,-50%) rotateX(0deg) scale(1.5)', opacity: 0 }], { delay: i*100 });
         } else {
           const field = makeField(overlay, cut === 'shield'
             ? '<g class="cut-protection"><path d="M-50 660Q720 130 1490 660"/><path d="M-50 700Q720 170 1490 700"/></g>'
@@ -227,15 +281,16 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
         });
         draw(makeField(overlay, '<g class="cut-circuit"><path d="M720 700V405H240V180M720 405V100M720 405h480V180"/></g>'));
       }
-      animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { duration: 400, delay: 180 });
-      await Promise.race([sleep(330), interrupted]);
+      animate(outgoing, [{ opacity: 1, filter: 'blur(0px)' }, { opacity: 0, filter: 'blur(3px)' }], { duration: 450, delay: 120 });
+      await Promise.race([sleep(380), interrupted]);
       swapOnce();
-      animate(incoming, [{ opacity: 0 }, { opacity: 1 }], { duration: 360 });
+      animate(incoming, [{ opacity: 0, filter: 'blur(4px)' }, { opacity: 1, filter: 'blur(0px)' }], { duration: 600 });
     }
     await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
   } finally {
     swapOnce();
     finishCut = undefined;
+    cleanups.forEach(cleanup => cleanup());
     animations.forEach(animation => animation.cancel());
     outgoing.classList.remove('is-departing');
     if (carriedSource) carriedSource.style.visibility = sourceVisibility;

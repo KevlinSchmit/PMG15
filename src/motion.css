@@ -16,4 +16,8 @@
 .demo-slide .demo-layout{position:absolute;top:259px;left:74px;right:74px;margin-top:0}.portrait .demo-slide .demo-layout{top:316px;left:55px;right:55px;margin-top:0}
 .placement-corner{top:105px}.portrait .placement-corner{visibility:hidden}
 .slide.is-departing{visibility:visible;pointer-events:none}
+.breaking-wave,.transition-atmosphere{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}.transition-atmosphere{z-index:0}
+.transition-blueprint{position:absolute;z-index:5;pointer-events:none;mix-blend-mode:multiply}.transition-blueprint img{width:100%;height:100%;object-fit:contain}
+.product-scan{position:absolute;width:2px;z-index:6;pointer-events:none;background:linear-gradient(transparent,#71e4f7,transparent);box-shadow:0 0 30px #35cff8}
+.transition-field path{filter:drop-shadow(0 0 4px #6ccabd55)}.transition-object{filter:drop-shadow(0 8px 16px #16484a20)}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}

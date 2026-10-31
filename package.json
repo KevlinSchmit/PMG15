@@ -16,6 +16,7 @@
   "dependencies": {
     "@fontsource/anton": "^5.2.0",
     "@fontsource/dm-mono": "^5.2.0",
-    "@fontsource/dm-sans": "^5.2.0"
+    "@fontsource/dm-sans": "^5.2.0",
+    "three": "0.180.0"
   }
 }
