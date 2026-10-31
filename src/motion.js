@@ -158,25 +158,28 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
       const coverMotion=outgoing.getAnimations({subtree:true}).filter(a=>a.playState==='running');
       coverMotion.forEach(a=>a.pause());
       cleanups.push(()=>coverMotion.forEach(a=>{try{a.play();}catch{}}));
-      cleanups.push(waterSweep(overlay, animate, { full: true, duration: 1800, backwards: !backwards }));
-      await Promise.race([sleep(900), interrupted]);
+      cleanups.push(waterSweep(overlay, animate, { full: true, duration: 1000, backwards: !backwards }));
+      await Promise.race([sleep(510), interrupted]);
       swapOnce();
     } else if (cut === 'blueprint' && incoming.id === 'product-360') {
       const source = outgoing.querySelector('.sketch-button img');
-      const rect = source.getBoundingClientRect();
-      const sketch = document.createElement('div');
-      sketch.className = 'transition-blueprint';
-      sketch.style.cssText = `left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;`;
-      sketch.append(source.cloneNode());overlay.append(sketch);
-      carriedSource=source;sourceVisibility=source.style.visibility;source.style.visibility='hidden';
-      // Both drawings occupy the exact same image rectangle. The solid model is
-      // held at its calibrated front pose until this material dissolve completes.
-      animate(sketch,[{opacity:1},{opacity:0}],{duration:1150,delay:200});
-      animate(outgoing,[{opacity:1},{opacity:0}],{duration:250});
-      animate(incoming.querySelector('#rod-viewport'),[{opacity:0},{opacity:1}],{duration:1150,delay:200});
-      animate(incoming.querySelector('.product-copy'),[{opacity:0},{opacity:1}],{duration:550,delay:450});
-      animate(incoming.querySelector('.product-angle'),[{opacity:0},{opacity:1}],{duration:400,delay:1100});
-      await Promise.race([sleep(200),interrupted]);
+      // Keep the original drawing in its own opaque sage slide so its multiply
+      // blend retains the background. A cloned bitmap in the isolated overlay
+      // exposes its white paper. The incoming canvas shares this exact image slot.
+      outgoing.classList.add('is-morph-source');
+      incoming.classList.add('is-morph-target');
+      cleanups.push(()=>{
+        outgoing.classList.remove('is-morph-source');
+        incoming.classList.remove('is-morph-target');
+      });
+      animate(source,[{opacity:1},{opacity:0}],{duration:750,delay:100});
+      outgoing.querySelectorAll('.slide-kicker,h2,.solution-features,.scene-object,.expand-icon').forEach(element=>{
+        animate(element,[{opacity:getComputedStyle(element).opacity},{opacity:0}],{duration:250});
+      });
+      animate(incoming.querySelector('#rod-viewport'),[{opacity:0},{opacity:1}],{duration:750,delay:100});
+      animate(incoming.querySelector('.product-copy'),[{opacity:0},{opacity:1}],{duration:450,delay:250});
+      animate(incoming.querySelector('.product-angle'),[{opacity:0},{opacity:1}],{duration:250,delay:700});
+      await Promise.race([sleep(100),interrupted]);
       swapOnce();
     } else if (encounter) {
       cleanups.push(waterSweep(overlay, animate, { duration: 950, deep: true, backwards }));

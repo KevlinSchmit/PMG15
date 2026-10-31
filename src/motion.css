@@ -19,7 +19,7 @@
 .hero-waves{position:absolute;bottom:-130px;right:-20px;width:750px;max-width:none;z-index:3;pointer-events:none}
 .portrait .hero-waves{width:850px;bottom:-160px}
 .breaking-wave,.transition-atmosphere{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:8}.transition-atmosphere{z-index:0}
-.transition-blueprint{position:absolute;z-index:5;pointer-events:none;mix-blend-mode:multiply}.transition-blueprint img{width:100%;height:100%;object-fit:contain}
-.product-scan{position:absolute;width:2px;z-index:6;pointer-events:none;background:linear-gradient(transparent,#71e4f7,transparent);box-shadow:0 0 30px #35cff8}
+.slide.is-morph-source{visibility:visible;opacity:1;pointer-events:none}
+.product-slide.is-morph-target{background:transparent}
 .transition-field path{filter:drop-shadow(0 0 4px #6ccabd55)}.transition-object{filter:drop-shadow(0 8px 16px #16484a20)}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}

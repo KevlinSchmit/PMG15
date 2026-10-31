@@ -56,7 +56,10 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
   const maps=full?makeWaterMaps():undefined;
   const rand = random(316);
   const foam = Array.from({length: full ? 180 : 130}, () => ({y:rand(),spread:rand(),r:rand(),phase:rand()*TAU,speed:rand(),drift:rand()}));
-  const clock = animate(canvas, [{opacity:1},{opacity:1}], {duration,easing:'linear'});
+  const frames=full
+    ? [{opacity:1,offset:0},{opacity:1,offset:.64},{opacity:0,offset:.94},{opacity:0,offset:1}]
+    : [{opacity:1},{opacity:1}];
+  const clock = animate(canvas, frames, {duration,easing:'linear'});
   let frame, stopped = false;
   function draw() {
     if(stopped)return;
@@ -66,7 +69,7 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
     if(backwards){ctx.translate(w,0);ctx.scale(-1,1);}
     const fade = Math.sin(Math.PI*t) ** .6;
     if(full) {
-      const head = (-.28 + t*3.1)*w;
+      const head = (-.28 + t*2.73)*w;
       const front = y => head + Math.sin(y/h*3.5-t*1.5)*w*.085 + Math.sin(y/h*10-t*2)*w*.012+w*.05*Math.exp(-Math.pow((y/h-.39)*7,2));
       function sheet(offset, width, color) {
         ctx.beginPath();
@@ -78,7 +81,7 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
       // One opaque wave hides the page swap at its midpoint.
       const body=ctx.createLinearGradient(head-w,0,head,0);
       body.addColorStop(0,'#5e806d');body.addColorStop(.65,'#85a28a');body.addColorStop(1,'#b2c7aa');
-      sheet(0,w*1.7,body);
+      sheet(0,w*1.3,body);
       // Long, tapering water lines follow the rolling face, instead of uniform bands.
       ctx.save();ctx.clip();
       // Soft, low-contrast water grain adds a rolling surface while the broad

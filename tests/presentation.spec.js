@@ -78,7 +78,7 @@ test('all scenes have object transitions, steady typography, and working navigat
     await expect(page.locator('.transition-ocean h1,.transition-ocean h2,.transition-ocean li,.transition-source')).toHaveCount(0);
     if (i === 7) await expect(page.locator('.transition-camera')).toHaveCount(1);
     else if (i === 1) await expect(page.locator('.breaking-wave')).toHaveCount(1);
-    else if (i === 4) await expect(page.locator('.transition-blueprint')).toHaveCount(1);
+    else if (i === 4) await expect(page.locator('#solution')).toHaveClass(/is-morph-source/);
     else await expect(page.locator('.transition-object svg')).toHaveCount(1);
     await slide(page, i + 1);
     await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', transitions[i - 1]);
@@ -254,12 +254,13 @@ test('the concept becomes a solid at the same anchors before rotation starts on 
     const source=await page.locator('#solution .sketch-button img').evaluate(img=>{
       const r=img.getBoundingClientRect(),scale=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight);
       const x=r.left+(r.width-img.naturalWidth*scale)/2,y=r.top+(r.height-img.naturalHeight*scale)/2;
-      return {rect:r.toJSON(),tip:{x:x+902*scale,y:y+44*scale},butt:{x:x+182*scale,y:y+1462*scale}};
+      return {rect:r.toJSON(),background:getComputedStyle(img.closest('.slide')).backgroundColor.match(/\d+/g).slice(0,3).map(Number),tip:{x:x+902*scale,y:y+44*scale},butt:{x:x+182*scale,y:y+1462*scale}};
     });
     await page.keyboard.press('ArrowRight');
     await page.evaluate(()=>document.getAnimations().forEach(a=>a.pause()));
-    await expect(page.locator('.transition-blueprint')).toBeVisible();
-    const carried=await page.locator('.transition-blueprint').boundingBox();
+    await expect(page.locator('#solution .sketch-button img')).toBeVisible();
+    await expect(page.locator('.transition-ocean img')).toHaveCount(0);
+    const carried=await page.locator('#solution .sketch-button img').boundingBox();
     for(const field of ['x','y','width','height'])expect(carried[field]).toBeCloseTo(source.rect[field],1);
     await expect(page.locator('#product-360')).toHaveClass(/is-active/);
     await expect(viewport).toHaveAttribute('data-angle','0.0000');
@@ -269,6 +270,18 @@ test('the concept becomes a solid at the same anchors before rotation starts on 
     await page.waitForTimeout(250);
     expect(await viewport.boundingBox()).toEqual(slot);
     await expect(viewport).toHaveAttribute('data-angle','0.0000');
+    // Sample a blank paper margin in the actual composited frame. The sketch
+    // must keep the sage page color throughout the dissolve, never flash white.
+    for(const time of [150,450,800]) {
+      await page.evaluate(time=>document.getAnimations().filter(a=>a.effect.target.matches('#solution .sketch-button img,#rod-viewport')).forEach(a=>{a.currentTime=time;}),time);
+      const shot=await page.screenshot({clip:{x:Math.round(source.rect.x+source.rect.width*.2),y:Math.round(source.rect.y+source.rect.height*.15),width:1,height:1}});
+      const rgb=await page.evaluate(async data=>{
+        const image=new Image();image.src=data;await image.decode();
+        const c=document.createElement('canvas');c.width=c.height=1;const ctx=c.getContext('2d');ctx.drawImage(image,0,0);
+        return [...ctx.getImageData(0,0,1,1).data].slice(0,3);
+      },'data:image/png;base64,'+shot.toString('base64'));
+      rgb.forEach((value,i)=>expect(Math.abs(value-source.background[i])).toBeLessThan(8));
+    }
     await page.evaluate(()=>document.getAnimations().forEach(a=>a.play()));
     await idle(page);
     await expect(viewport).toHaveAttribute('data-morphing','false');
