@@ -83,7 +83,7 @@ test('pausing an object transition finishes navigation and removes its overlay',
 });
 
 test('redrawn charts animate to the exact source figures and retain original graphics', async ({ page }) => {
-  await page.goto('/#slide-6');
+  await page.goto('/#slide-8');
   for (const value of ['$941,300,000', '$740,520,000', '$3,495,000']) {
     await expect(page.locator('#market-chart .market-ledger strong', { hasText: value })).toBeVisible();
   }
