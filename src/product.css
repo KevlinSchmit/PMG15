@@ -1,5 +1,5 @@
 .product-slide {
-  background: radial-gradient(ellipse at 25% 48%, #f8fcfb 0, #e5f0f0 43%, #e9f0e7 82%);
+  background: var(--mint);
 }
 
 .product-slide .slide-kicker {
