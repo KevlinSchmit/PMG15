@@ -4,14 +4,14 @@ async function idle(page) {
   await expect(page.locator('body')).not.toHaveClass(/is-transitioning/);
 }
 async function slide(page, number) {
-  await expect(page.locator('#slide-position')).toHaveText(`${String(number).padStart(2, '0')} / 22`);
+  await expect(page.locator('#slide-position')).toHaveText(`${String(number).padStart(2, '0')} / 16`);
   await idle(page);
 }
 
 test('refreshing the final scene restarts at page one with working navigation', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/#slide-22');
-  await slide(page, 22);
+  await page.goto('/#slide-16');
+  await slide(page, 16);
   await page.reload();
   await slide(page, 1);
   await expect(page).toHaveURL(/#slide-1$/);
@@ -40,25 +40,25 @@ test('a legacy pause and an explicit pause do not silently suppress motion after
 });
 
 test('normal navigation brings in the turtle and retracts the detailed hooks', async ({ page }) => {
-  await page.goto('/#slide-7');
+  await page.goto('/#slide-5');
   await expect(page.locator('#in-action .precision-lure svg')).toBeVisible();
   await expect(page.locator('#in-action .deep-scene')).toHaveAttribute('data-encounter', 'fishing');
   await expect(page.locator('#in-action button')).toHaveCount(0);
   await expect(page.locator('#in-action .precision-turtle')).toHaveCSS('opacity', '0');
   const camera = await page.locator('#in-action .deep-scene').boundingBox();
   await page.keyboard.press(' ');
-  await slide(page, 8);
+  await slide(page, 6);
   expect(await page.locator('#protected-encounter .deep-scene').boundingBox()).toEqual(camera);
   await expect(page.locator('#protected-encounter .deep-scene')).toHaveAttribute('data-encounter', 'protected');
   await expect(page.locator('#protected-encounter .precision-turtle')).toHaveCSS('opacity', '1');
   await expect(page.locator('#protected-encounter .detail-hook').first()).toHaveCSS('opacity', '0');
   await page.reload();
   await slide(page, 1);
-  await page.goto('/?encounter-revisit#slide-8');
-  await slide(page, 8);
+  await page.goto('/?encounter-revisit#slide-6');
+  await slide(page, 6);
   await expect(page.locator('#protected-encounter .precision-turtle')).toHaveCSS('opacity', '1');
   await page.keyboard.press('ArrowLeft');
-  await slide(page, 7);
+  await slide(page, 5);
   await expect(page.locator('#in-action .deep-scene')).toHaveAttribute('data-encounter', 'fishing');
 });
 
@@ -67,16 +67,16 @@ test('all scenes have object transitions, steady typography, and working navigat
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   const transitions = await page.locator('.slide').evaluateAll(slides => slides.map(s => s.dataset.transition));
-  expect(new Set(transitions).size).toBe(22);
+  expect(new Set(transitions).size).toBe(16);
   await expect(page.locator('#market,#competition,#definition,#uvp,#financials')).toHaveCount(0);
   await expect(page.locator('.kinetic-word')).toHaveCount(0);
-  await expect(page.locator('.scene-object')).toHaveCount(22);
+  await expect(page.locator('.scene-object')).toHaveCount(16);
   expect(await page.locator('.slide').evaluateAll(slides => new Set(slides.map(s => s.dataset.cut)).size)).toBeGreaterThan(12);
-  for (let i = 1; i < 22; i++) {
+  for (let i = 1; i < 16; i++) {
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('.transition-ocean')).toHaveClass(/play/);
     await expect(page.locator('.transition-ocean h1,.transition-ocean h2,.transition-ocean li,.transition-source')).toHaveCount(0);
-    if (i === 7) await expect(page.locator('.transition-camera')).toHaveCount(1);
+    if (i === 5) await expect(page.locator('.transition-camera')).toHaveCount(1);
     else await expect(page.locator('.transition-object svg')).toHaveCount(1);
     await slide(page, i + 1);
     await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', transitions[i - 1]);
@@ -91,23 +91,23 @@ test('all scenes have object transitions, steady typography, and working navigat
 });
 
 test('pausing an object transition finishes navigation and removes its overlay', async ({ page }) => {
-  await page.goto('/#slide-10');
+  await page.goto('/#slide-7');
   await page.keyboard.press('ArrowRight');
   await expect(page.locator('.transition-object')).toHaveCount(1);
   await page.getByRole('button', { name: 'Pause animations' }).click();
-  await slide(page, 11);
+  await slide(page, 8);
   await expect(page.locator('.transition-ocean')).not.toHaveClass(/play/);
   await expect(page.locator('.transition-object')).toHaveCount(0);
   expect(await page.locator('.slide.is-active').evaluate(scene => scene.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
   await page.keyboard.press('ArrowLeft');
-  await slide(page, 10);
+  await slide(page, 7);
   await page.getByRole('button', { name: 'Resume animations' }).click();
   await page.keyboard.press('ArrowRight');
-  await slide(page, 11);
+  await slide(page, 8);
 });
 
 test('redrawn charts animate to the exact source figures and retain original graphics', async ({ page }) => {
-  await page.goto('/#slide-10');
+  await page.goto('/#slide-7');
   for (const value of ['$230,000,000', '$117,967,200', '$1,179,672']) {
     await expect(page.locator('#market-chart .market-ledger strong', { hasText: value })).toBeVisible();
   }
@@ -115,7 +115,7 @@ test('redrawn charts animate to the exact source figures and retain original gra
   await expect(page.locator('.image-dialog')).toBeVisible();
   await page.keyboard.press('Escape');
   await page.keyboard.press('End');
-  await slide(page, 22);
+  await slide(page, 16);
   await expect(page.locator('#funds-chart .donut-center strong')).toHaveText('$737,649');
   await expect(page.locator('.fund-arc')).toHaveCount(4);
   for (const value of ['$357,268', '$153,115', '$126,000', '$101,266']) {
@@ -130,7 +130,7 @@ test('decoration leaves reading and source controls clear on desktop and portrai
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await page.goto('/?spacing=' + width);
-    for (let i = 1; i <= 22; i++) {
+    for (let i = 1; i <= 16; i++) {
       if (i > 1) await page.keyboard.press('ArrowRight');
       await slide(page, i);
       const hits = await page.locator('.slide.is-active').evaluate(scene => {
@@ -159,7 +159,7 @@ test('portrait slides fit without scrolling and reduced motion shows final conte
   await page.goto('/');
   await expect(page.locator('body')).toHaveClass(/motion-paused/);
   const issues = [];
-  for (let i = 1; i <= 22; i++) {
+  for (let i = 1; i <= 16; i++) {
     if (i > 1) await page.keyboard.press('ArrowRight');
     await slide(page, i);
     const overflow = await page.locator('.slide.is-active').evaluate(s => {
