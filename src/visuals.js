@@ -21,17 +21,17 @@ export function mountScenes() {
 }
 
 const marketRows = [
-  ['TAM','Total Addressable Market',230000000,'1.14M anglers × $199'],
-  ['SAM','Serviceable Available Market',117967200,'52% serviceable share'],
-  ['SOM','Serviceable Obtainable Market',1179672,'1% launch capture']
+  ['TAM','Total Addressable Market',941300000,'1.35M potential customers. Frequent, technology-using U.S. saltwater anglers at $699 per unit.'],
+  ['SAM','Serviceable Available Market',740520000,'1.06M serviceable customers. Based on 78.67% estimated technology availability and integration feasibility.'],
+  ['SOM','Serviceable Obtainable Market',3495000,'5,000 customers annually. Based on a 0.472% <br>annual market capture and early production capacity.']
 ];
 const currency = n => '$' + n.toLocaleString('en-US');
 export function mountCharts() {
-  document.querySelector('#market-chart').innerHTML = `<div class="market-nesting" role="img" aria-label="TAM $230,000,000; SAM $117,967,200; SOM $1,179,672">
+  document.querySelector('#market-chart').innerHTML = `<div class="market-nesting" role="img" aria-label="TAM $941,300,000; SAM $740,520,000; SOM $3,495,000">
     <div class="market-orbit orbit-a"></div><div class="market-orbit orbit-b"></div>
-    <div class="market-basin basin-tam"><span class="mono">TAM</span><strong>${currency(230000000)}</strong><small>Total Addressable Market</small></div>
-    <div class="market-basin basin-sam"><span class="mono">SAM</span><strong>${currency(117967200)}</strong><small>Serviceable Available Market</small></div>
-    <div class="market-basin basin-som"><span class="mono">SOM</span><strong>${currency(1179672)}</strong><small>Serviceable Obtainable Market</small></div>
+    <div class="market-basin basin-tam"><span class="mono">TAM</span><strong>${currency(941300000)}</strong><small>Total Addressable Market</small></div>
+    <div class="market-basin basin-sam"><span class="mono">SAM</span><strong>${currency(740520000)}</strong><small>Serviceable Available Market</small></div>
+    <div class="market-basin basin-som"><span class="mono">SOM</span><strong>${currency(3495000)}</strong><small>Serviceable Obtainable Market<br>Annual</small></div>
   </div><div class="market-ledger">${marketRows.map(([key,label,value,description],i)=>`<div class="market-ledger-row" style="--row:${i}"><span class="ledger-key mono">${key}</span><div><h3>${key} – ${label}</h3><strong data-count="${value}">${currency(value)}</strong><p>${description}</p></div><span class="ledger-dot dot-${key.toLowerCase()}"></span></div>`).join('')}</div>`;
   const items = [
     ['Materials',357268,'Cameras, AI chips, screens and rod components','#224f4b'],
