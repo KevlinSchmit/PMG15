@@ -1,25 +1,20 @@
 import { mountSceneArt, sceneArt } from './scene-art.js';
-import { waterSweep } from './water-transition.js';
 
 // A cut belongs to its subject. Dense pages keep their objects in the margins.
 const profiles = {
-  surface: ['breaking-cover-wave', 'school', 'hero', 'breaking-wave'],
+  surface: ['surface-school-departure', 'school', 'hero', 'school'],
   challenge: ['bycatch-net-release', 'net', 'footer', 'net'],
   drivers: ['technology-signal-relay', 'chip', 'footer', 'signal'],
-  solution: ['blueprint-to-product', 'lure', 'corner', 'blueprint'],
-  'product-360': ['product-orbit-to-vision', 'focus', 'hidden', 'orbit'],
-  'in-action': ['continuous-underwater-encounter', 'sonar', 'hidden', 'encounter'],
-  'protected-encounter': ['protected-turtle-departure', 'turtle', 'hidden', 'turtle'],
+  solution: ['smart-lure-line-cast', 'lure', 'corner', 'cast'],
+  'product-360': ['product-orbit-study', 'focus', 'corner', 'orbit'],
   'market-overview': ['market-school-circulation', 'school', 'footer', 'school'],
-  tam: ['total-market-fleet-crossing', 'fleet', 'footer', 'fleet'],
-  sam: ['serviceable-market-sonar', 'sonar', 'footer', 'sonar'],
-  som: ['obtainable-market-fish-track', 'focus', 'footer', 'track'],
   swot: ['swot-branching-paths', 'coral', 'corner', 'branches'],
   landscape: ['landscape-course-chart', 'route', 'corner', 'route'],
   comparison: ['comparison-circuit-connect', 'chip', 'footer', 'signal'],
   value: ['protected-fish-release', 'turtle', 'value', 'turtle'],
   'visual-value': ['camera-field-of-view', 'focus', 'corner', 'scan'],
-  funds: ['funding-return-to-ocean', 'funds', 'footer', 'return']
+  funds: ['funding-return-to-ocean', 'funds', 'footer', 'return'],
+  'next-step': ['smart-net-expansion', 'net', 'corner', 'net']
 };
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const easing = 'cubic-bezier(.22,.65,.3,1)';
@@ -60,7 +55,7 @@ export async function enterSlide(slide, index, paused) {
   ]);
   if (version !== latestEntry || !slide.classList.contains('is-active') || paused()) return;
   // Reading stays still. Only a quiet dissolve, never word-by-word zooms or rotations.
-  slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape').forEach(element => {
+  slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape,.problem-thesis,.next-step-lead,.next-step-proof,.net-vision').forEach(element => {
     if (element.parentElement.closest('.map-heading,.calculation-content')) return;
     play(element, [{ opacity: 0 }, { opacity: 1 }], { duration: 420, delay: 40 });
   });
@@ -126,7 +121,6 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   overlay.classList.add('play');
   overlay.classList.toggle('backwards', backwards);
   const animations = [];
-  const cleanups = [];
   let finishRequested = false;
   let releaseCut;
   const interrupted = new Promise(resolve => { releaseCut = resolve; });
@@ -152,44 +146,13 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   };
   try {
     const encounter = [outgoing.id, incoming.id].every(id => ['in-action', 'protected-encounter'].includes(id));
-    if (cut === 'breaking-wave') {
-      // Freeze the existing illustration in its current pose. Only the broad
-      // wave moves; it never overwrites the rod's transform or animates the SVG.
-      const coverMotion=outgoing.getAnimations({subtree:true}).filter(a=>a.playState==='running');
-      coverMotion.forEach(a=>a.pause());
-      cleanups.push(()=>coverMotion.forEach(a=>{try{a.play();}catch{}}));
-      cleanups.push(waterSweep(overlay, animate, { full: true, duration: 1000, backwards: !backwards }));
-      await Promise.race([sleep(510), interrupted]);
-      swapOnce();
-    } else if (cut === 'blueprint' && incoming.id === 'product-360') {
-      const source = outgoing.querySelector('.sketch-button img');
-      // Keep the original drawing in its own opaque sage slide so its multiply
-      // blend retains the background. A cloned bitmap in the isolated overlay
-      // exposes its white paper. The incoming canvas shares this exact image slot.
-      outgoing.classList.add('is-morph-source');
-      incoming.classList.add('is-morph-target');
-      cleanups.push(()=>{
-        outgoing.classList.remove('is-morph-source');
-        incoming.classList.remove('is-morph-target');
-      });
-      animate(source,[{opacity:1},{opacity:0}],{duration:750,delay:100});
-      outgoing.querySelectorAll('.slide-kicker,h2,.solution-features,.scene-object,.expand-icon').forEach(element=>{
-        animate(element,[{opacity:getComputedStyle(element).opacity},{opacity:0}],{duration:250});
-      });
-      animate(incoming.querySelector('#rod-viewport'),[{opacity:0},{opacity:1}],{duration:750,delay:100});
-      animate(incoming.querySelector('.product-copy'),[{opacity:0},{opacity:1}],{duration:450,delay:250});
-      animate(incoming.querySelector('.product-angle'),[{opacity:0},{opacity:1}],{duration:250,delay:700});
-      await Promise.race([sleep(100),interrupted]);
-      swapOnce();
-    } else if (encounter) {
-      cleanups.push(waterSweep(overlay, animate, { duration: 950, deep: true, backwards }));
+    if (encounter) {
       const camera = holdCamera(outgoing, overlay);
       animate(outgoing.querySelector('.demo-aside'), [{ opacity: 1 }, { opacity: 0 }], { duration: 180 });
       await Promise.race([sleep(180), interrupted]);
       swapOnce();
       animate(camera, [{ opacity: 1 }, { opacity: 0 }], { duration: 230 });
     } else {
-      cleanups.push(waterSweep(overlay, animate, { duration: 1200, backwards, deep: outgoing.dataset.theme === 'deep' }));
       outgoing.classList.add('is-departing');
       const object = carryObject(outgoing, overlay, art);
       carriedSource = outgoing.querySelector('.scene-object');
@@ -225,19 +188,19 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
         net.style.transformOrigin = '50% 0';
         animate(net, [{ opacity: 1, transform: 'rotate(0)' }, { opacity: 0, transform: 'translateY(-200px) rotate(-22deg)' }]);
         depart(distance * .6, -60);
-      } else if (['cast', 'drop', 'blueprint'].includes(cut)) {
+      } else if (['cast', 'drop'].includes(cut)) {
         const x = parseFloat(object.style.left), y = parseFloat(object.style.top);
-        object.style.offsetPath = cut !== 'drop'
+        object.style.offsetPath = cut === 'cast'
           ? `path("M0 0C${-x*.5} ${-y*.8} ${innerWidth*.35} ${-y*.5} ${distance*.7} ${innerHeight*.5}")`
           : `path("M0 0C-30 60 35 180 0 ${innerHeight}")`;
         object.style.offsetRotate = '0deg';
         animate(object, [{ offsetDistance: '0%', opacity: 1 }, { offsetDistance: '100%', opacity: 0 }]);
         draw(makeField(overlay, '<g class="cut-cast"><path d="M0 720Q480-220 1110 280T1540 810"/></g>'));
-      } else if (['sonar', 'scan', 'track', 'shield', 'orbit'].includes(cut)) {
+      } else if (['sonar', 'scan', 'track', 'shield'].includes(cut)) {
         depart(0, -25);
-        if (cut === 'sonar' || cut === 'orbit') for (let i = 0; i < 3; i++) {
+        if (cut === 'sonar') for (let i = 0; i < 3; i++) {
           const ring = document.createElement('div'); ring.className = 'transition-sonar'; overlay.append(ring);
-          animate(ring, [{ transform: 'translate(-50%,-50%) rotateX(55deg) scale(.15)', opacity: 0 }, { opacity: .5, offset: .25 }, { transform: 'translate(-50%,-50%) rotateX(0deg) scale(1.5)', opacity: 0 }], { delay: i*100 });
+          animate(ring, [{ transform: 'translate(-50%,-50%) scale(.15)', opacity: 0 }, { opacity: .5, offset: .25 }, { transform: 'translate(-50%,-50%) scale(1.5)', opacity: 0 }], { delay: i*100 });
         } else {
           const field = makeField(overlay, cut === 'shield'
             ? '<g class="cut-protection"><path d="M-50 660Q720 130 1490 660"/><path d="M-50 700Q720 170 1490 700"/></g>'
@@ -261,16 +224,15 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
         });
         draw(makeField(overlay, '<g class="cut-circuit"><path d="M720 700V405H240V180M720 405V100M720 405h480V180"/></g>'));
       }
-      animate(outgoing, [{ opacity: 1, filter: 'blur(0px)' }, { opacity: 0, filter: 'blur(3px)' }], { duration: 450, delay: 120 });
-      await Promise.race([sleep(380), interrupted]);
+      animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { duration: 400, delay: 180 });
+      await Promise.race([sleep(330), interrupted]);
       swapOnce();
-      animate(incoming, [{ opacity: 0, filter: 'blur(4px)' }, { opacity: 1, filter: 'blur(0px)' }], { duration: 600 });
+      animate(incoming, [{ opacity: 0 }, { opacity: 1 }], { duration: 360 });
     }
     await Promise.all(animations.map(animation => animation.finished.catch(() => {})));
   } finally {
     swapOnce();
     finishCut = undefined;
-    cleanups.forEach(cleanup => cleanup());
     animations.forEach(animation => animation.cancel());
     outgoing.classList.remove('is-departing');
     if (carriedSource) carriedSource.style.visibility = sourceVisibility;

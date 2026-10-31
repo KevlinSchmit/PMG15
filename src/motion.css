@@ -12,6 +12,8 @@
 .motion-paused *,.motion-paused *:before,.motion-paused *:after{animation:none!important;transition:none!important}.motion-paused .deep-scene[data-encounter="protected"] .precision-turtle{right:0;opacity:1}
 .object-school>svg,.object-turtle>svg,.transition-swimmer>svg{scale:-1 1}.backwards .transition-object.object-school>svg,.backwards .transition-object.object-turtle>svg,.backwards .transition-swimmer>svg{scale:1 1}
 .market-graphic .scene-object,.funds-slide .scene-object{top:104px;bottom:auto;right:40px;width:145px}.comparison-slide .scene-object{right:auto;left:80px}.demo-slide h2,.encounter-slide h2{font-size:55px}.encounter-slide .demo-layout{margin-top:35px}
+.problem-slide .scene-object{visibility:hidden}
+.product-slide .scene-object{visibility:hidden}
 .portrait .demo-slide h2{font-size:64px}.portrait .demo-slide .demo-layout{margin-top:40px}.portrait .drivers-slide .scene-object,.portrait .landscape-slide .scene-object{visibility:hidden}.portrait .market-graphic .scene-object,.portrait .funds-slide .scene-object{top:65px;bottom:auto;right:40px;width:145px}.portrait .comparison-slide .scene-object{right:auto;left:55px;width:160px}
 .demo-slide .demo-layout{position:absolute;top:259px;left:74px;right:74px;margin-top:0}.portrait .demo-slide .demo-layout{top:316px;left:55px;right:55px;margin-top:0}
 .placement-corner{top:105px}.portrait .placement-corner{visibility:hidden}

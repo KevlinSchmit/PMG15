@@ -21,9 +21,9 @@ export function mountScenes() {
 }
 
 const marketRows = [
-  ['TAM','Total Addressable Market',230000000,'Based on U.S. recreational and commercial fishing assumptions.'],
-  ['SAM','Serviceable Available Market',117967200,'Based on 52% serviceability / integration feasibility.'],
-  ['SOM','Serviceable Obtainable Market',1179672,'Based on 1% market capture assumption.']
+  ['TAM','Total Addressable Market',230000000,'1.14M anglers × $199'],
+  ['SAM','Serviceable Available Market',117967200,'52% serviceable share'],
+  ['SOM','Serviceable Obtainable Market',1179672,'1% launch capture']
 ];
 const currency = n => '$' + n.toLocaleString('en-US');
 export function mountCharts() {

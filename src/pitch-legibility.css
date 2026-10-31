@@ -1,0 +1,147 @@
+/* Presentation-distance typography: no essential slide copy should read like fine print. */
+.slide-kicker,
+.slide-kicker > span:last-child {
+  font-size: 13px;
+  letter-spacing: .1em;
+}
+
+.slide .mono,
+.slide .overline {
+  font-size: 14px;
+}
+
+.slide small {
+  font-size: 13px;
+}
+
+.floating-label,
+.label-marine {
+  font-size: 12px;
+}
+
+.floating-label b,
+.hero-authors {
+  font-size: 14px;
+}
+
+.driver-number {
+  font-size: 15px;
+}
+
+.driver-copy {
+  font-size: 19px;
+  line-height: 1.5;
+}
+
+.solution-features > .overline,
+.feature-list > li > .mono {
+  font-size: 15px;
+}
+
+.feature-list p {
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.original-chart-button,
+.source-trigger {
+  font-size: 14px;
+}
+
+.market-basin > small,
+.basin-som > small {
+  font-size: 13px;
+}
+
+.ledger-key,
+.market-ledger-row p {
+  font-size: 14px;
+}
+
+.funds-subtitle,
+.donut-center > .mono,
+.donut-coordinate {
+  font-size: 13px;
+}
+
+.funds-ledger-row p,
+.funds-slide .financial-notes p {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.funds-footnote {
+  font-size: 12px;
+}
+
+.axis-top,
+.axis-left,
+.axis-right,
+.axis-bottom,
+.plot-high,
+.plot-low {
+  font-size: 14px;
+}
+
+.next-step-copy .overline,
+.next-step-proof .mono,
+.net-signal,
+.net-camera small,
+.net-release small {
+  font-size: 13px;
+}
+
+.model-slide h2 {
+  font-size: 62px;
+}
+
+.model-slide .demo-aside h3 {
+  font-size: 39px;
+}
+
+.model-slide .demo-aside p {
+  font-size: 22px;
+  line-height: 1.5;
+}
+
+.model-points {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 32px;
+  border-top: 1px solid #e9f0e72b;
+  border-bottom: 1px solid #e9f0e72b;
+}
+
+.model-points span {
+  padding: 18px 8px;
+  color: #cbdcb0;
+  font-family: var(--mono);
+  font-size: 14px;
+  letter-spacing: .12em;
+  text-align: center;
+}
+
+.model-points span + span {
+  border-left: 1px solid #e9f0e72b;
+}
+
+.portrait .model-slide h2 {
+  font-size: 72px;
+}
+
+.portrait .model-slide .demo-aside h3 {
+  font-size: 42px;
+}
+
+.portrait .model-slide .demo-aside p {
+  font-size: 29px;
+}
+
+@media (max-width: 699px) {
+  .slide-kicker,
+  .slide-kicker > span:last-child,
+  .slide .mono,
+  .slide .overline {
+    font-size: 16px;
+  }
+}
