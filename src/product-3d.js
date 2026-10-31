@@ -1,11 +1,15 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+// Landmarks in the unmodified 1229 × 1556 concept image. Its object-fit content
+// rectangle and the orthographic camera share this coordinate system.
+const concept = { width: 1229, height: 1556, tip: [902, 44], butt: [182, 1462] };
+
 // Built as solids, including the back of the display and reel. No rotating image planes.
 function buildRod() {
   const assembly = new THREE.Group();
   const rod = new THREE.Group();
-  rod.rotation.z = -.34;
+  rod.rotation.z = -Math.atan2(concept.tip[0]-concept.butt[0], concept.butt[1]-concept.tip[1]);
   rod.position.x = -.7;
   assembly.add(rod);
   const metal = new THREE.MeshStandardMaterial({ color: 0xbfcbd2, metalness: 1, roughness: .21 });
@@ -84,8 +88,8 @@ function buildRod() {
   tube(rod, linePoints, .006, fishingLine);
 
   // Reel: spool, tightly wound line, rotor, bail wire, vented housing and crank.
-  const reel = new THREE.Group(); reel.position.set(.47, -1.64, .02); rod.add(reel);
-  tube(rod, [[.05,-1.1,0],[.38,-1.21,0],[.46,-1.61,0]], .06, darkMetal);
+  const reel = new THREE.Group(); reel.position.set(.47, -2.04, .02); rod.add(reel);
+  tube(rod, [[.05,-1.5,0],[.38,-1.61,0],[.46,-2.01,0]], .06, darkMetal);
   sphere(reel, 0, -.18, 0, .245, metal, [.75, 1.2, .75]);
   cylinder(reel, 0, .17, 0, .205, .19, .44, blue);
   cylinder(reel, 0, .17, 0, .174, .174, .5, darkMetal);
@@ -109,7 +113,7 @@ function buildRod() {
   for (const z of [-.16, .16]) cylinder(reel, 0, -.32, z, .04, .04, .08, black);
 
   // Screen has a machined enclosure, back vents, mount and luminous fish display.
-  const screen = new THREE.Group(); screen.position.set(-.32, -1.16, .2); screen.rotation.y = -.12; rod.add(screen);
+  const screen = new THREE.Group(); screen.position.set(-.06, -2.14, .2); screen.rotation.y = -.12; rod.add(screen);
   box(screen, .15, 0, -.15, .27, .13, .2, black);
   const enclosure = box(screen, -.16, 0, 0, .82, .54, .12, darkMetal);
   const bevel = new THREE.EdgesGeometry(enclosure.geometry, 20);
@@ -135,21 +139,22 @@ function buildRod() {
   // The hanging rig stays in the same turntable coordinate system as the rod.
   rod.updateMatrixWorld(true);
   const tip = new THREE.Vector3(...linePoints.at(-1)).applyMatrix4(rod.matrix);
-  const rig = new THREE.Group(); rig.position.set(1.43,0,.03); assembly.add(rig);
-  tube(assembly, [[tip.x,tip.y,tip.z],[1.43,3.85,.03],[1.43,2.28,.03]], .0045, metal);
-  cylinder(rig, 0, 2.0, 0, .014, .014, .85, black);
+  const rig = new THREE.Group(); rig.position.set(1.292,0,.03); assembly.add(rig);
+  tube(assembly, [[tip.x,tip.y,tip.z],[1.292,3.72,.03],[1.292,3.1,.03]], .0045, metal);
+  const bobber = new THREE.Group();bobber.position.y=.82;rig.add(bobber);
+  cylinder(bobber, 0, 2.0, 0, .014, .014, .85, black);
   const redLight = new THREE.MeshStandardMaterial({color:0xff451b, emissive:0xff2400,emissiveIntensity:2,roughness:.3});
   const greenLight = new THREE.MeshStandardMaterial({color:0x52ff92, emissive:0x00ff55,emissiveIntensity:1.6,roughness:.3});
-  cylinder(rig,0,2.28,0,.023,.023,.13,redLight);
-  cylinder(rig,0,2.02,0,.023,.023,.13,greenLight);
-  cylinder(rig,0,1.78,0,.023,.023,.13,redLight);
-  sphere(rig,0,1.36,0,.14,white,[1,1.55,1]);
-  sphere(rig,0,1.21,0,.136,orange,[1,1.25,1]);
-  cylinder(rig,0,1.055,0,.05,.025,.11,black);
-  cylinder(rig,0,.81,0,.008,.014,.4,metal);
-  tube(rig,[[0,.65,0],[.015,-.65,.01],[0,-1.79,0]],.0045,metal);
-  for (let i=0;i<3;i++) ring(rig,0,-1.86-i*.065,0,.028,.009,metal);
-  const lure = new THREE.Group();lure.position.y=-2.32;rig.add(lure);
+  cylinder(bobber,0,2.28,0,.023,.023,.13,redLight);
+  cylinder(bobber,0,2.02,0,.023,.023,.13,greenLight);
+  cylinder(bobber,0,1.78,0,.023,.023,.13,redLight);
+  sphere(bobber,0,1.36,0,.14,white,[1,1.55,1]);
+  sphere(bobber,0,1.21,0,.136,orange,[1,1.25,1]);
+  cylinder(bobber,0,1.055,0,.05,.025,.11,black);
+  cylinder(bobber,0,.81,0,.008,.014,.4,metal);
+  tube(rig,[[0,1.47,0],[.015,0,.01],[0,-1.5,0]],.0045,metal);
+  for (let i=0;i<3;i++) ring(rig,0,-1.57-i*.065,0,.028,.009,metal);
+  const lure = new THREE.Group();lure.position.y=-2.03;rig.add(lure);
   sphere(lure,0,0,0,.16,metal,[.85,1.85,.72]);
   sphere(lure,0,.12,.025,.12,blue,[.65,1.5,.9]);
   cylinder(lure,0,.27,0,.035,.08,.12,darkMetal);
@@ -169,6 +174,15 @@ function buildRod() {
     const barb=mesh(new THREE.ConeGeometry(.02,.07,12),metal,lure,dx*.12,-.45,dz*.12);barb.rotation.z=-dx*.3;
   }
   assembly.userData.materials = { redLight, greenLight };
+  rod.updateMatrix();
+  assembly.userData.anchors = {
+    tip: new THREE.Vector3(0,4.2,0).applyMatrix4(rod.matrix),
+    butt: new THREE.Vector3(0,-4.14,0).applyMatrix4(rod.matrix)
+  };
+  const scale = Math.hypot(concept.tip[0]-concept.butt[0],concept.tip[1]-concept.butt[1]) / 834;
+  assembly.scale.setScalar(scale);
+  const butt = assembly.userData.anchors.butt;
+  assembly.position.set((concept.butt[0]-concept.width/2)/100-butt.x*scale,(concept.height/2-concept.butt[1])/100-butt.y*scale,0);
   return assembly;
 }
 
@@ -176,14 +190,21 @@ export function mountProduct(slide) {
   const host=slide.querySelector('#rod-viewport');
   const spinButton=slide.querySelector('#rod-spin');
   const angleLabel=slide.querySelector('[data-rod-angle]');
-  let active=false,paused=false,userPaused=false,detail=false,renderer,scene,camera,model,frame=0,last=0,angle=.18,tilt=0,drag,dirty=true;
-  const initialAngle=.18;
+  const slot=slide.querySelector('.product-stage');
+  const source=document.querySelector('#solution .sketch-button img');
+  let active=false,paused=false,userPaused=false,detail=false,morphing=false,renderer,scene,camera,model,frame=0,last=0,angle=0,tilt=0,drag,dirty=true;
+  const initialAngle=0;
   function render(now=0) {
     const dt=Math.min((now-last)/1000,.3);last=now;
-    if(active&&!paused&&!userPaused&&!drag) angle+=dt*Math.PI*2/16;
+    if(active&&!paused&&!userPaused&&!morphing&&!drag) angle+=dt*Math.PI*2/16;
     if(model) {
       if(dirty||model.rotation.x!==tilt||model.rotation.y!==angle){
         model.rotation.set(tilt,angle,0);renderer.render(scene,camera);dirty=false;
+        const rect=host.getBoundingClientRect();
+        host.dataset.landmarks=JSON.stringify(Object.fromEntries(Object.entries(model.userData.anchors).map(([name,point])=>{
+          const projected=model.localToWorld(point.clone()).project(camera);
+          return [name,{x:rect.left+(projected.x+1)*rect.width/2,y:rect.top+(1-projected.y)*rect.height/2}];
+        })));
       }
       host.dataset.angle=angle.toFixed(4);
       angleLabel.textContent=String(Math.floor(((angle-initialAngle)*180/Math.PI%360+360)%360)).padStart(3,'0')+'°';
@@ -192,13 +213,23 @@ export function mountProduct(slide) {
   }
   function resize() {
     if(!renderer)return;
+    // Keep the fifth-page canvas in precisely the fourth-page image slot, also
+    // after a viewport change. There is no FLIP translation or scaling animation.
+    const src=source.getBoundingClientRect(),parent=slide.getBoundingClientRect();
+    const scale=parent.width/slide.offsetWidth;
+    slot.style.left=`${(src.left-parent.left)/scale}px`;
+    slot.style.top=`${(src.top-parent.top)/scale}px`;
+    slot.style.width=`${src.width/scale}px`;
+    slot.style.height=`${src.height/scale}px`;
     const r=host.getBoundingClientRect();
     if(!r.width||!r.height)return;
     renderer.setSize(r.width,r.height,false);
-    camera.aspect=r.width/r.height;
-    camera.position.z=detail?6.3:camera.aspect<.78?15.5:13.5;
-    camera.position.y=detail?-1.5:.15;
-    camera.lookAt(0,detail?-1.5:.05,0);
+    const fit=Math.min(r.width/concept.width,r.height/concept.height);
+    camera.left=-r.width/fit/200;camera.right=-camera.left;
+    camera.top=r.height/fit/200;camera.bottom=-camera.top;
+    camera.zoom=detail?2.05:1;
+    camera.position.set(0,detail?-3:0,20);
+    camera.lookAt(0,detail?-3:0,0);
     camera.updateProjectionMatrix();
     dirty=true;
     if(!frame)render(performance.now());
@@ -213,7 +244,7 @@ export function mountProduct(slide) {
       renderer.toneMappingExposure=1.12;
       host.append(renderer.domElement);
       scene=new THREE.Scene();
-      camera=new THREE.PerspectiveCamera(41,1,.1,80);camera.position.set(0,.15,13.5);camera.lookAt(0,.05,0);
+      camera=new THREE.OrthographicCamera(-7,7,8,-8,.1,80);camera.position.set(0,0,20);camera.lookAt(0,0,0);
       const pmrem=new THREE.PMREMGenerator(renderer);
       const room=new RoomEnvironment();
       scene.environment=pmrem.fromScene(room,.02).texture;room.dispose();pmrem.dispose();
@@ -233,6 +264,8 @@ export function mountProduct(slide) {
     }
   }
   new ResizeObserver(resize).observe(host);
+  new ResizeObserver(resize).observe(source);
+  document.fonts.ready.then(resize);
   spinButton.addEventListener('click',()=>{
     userPaused=!userPaused;spinButton.setAttribute('aria-pressed',String(userPaused));
     spinButton.setAttribute('aria-label',userPaused?'Resume product rotation':'Pause product rotation');
@@ -256,7 +289,9 @@ export function mountProduct(slide) {
   for(const type of ['click','touchstart','touchend'])host.addEventListener(type,event=>event.stopPropagation());
   document.addEventListener('visibilitychange',()=>{if(active&&!document.hidden&&!frame){last=performance.now();render(last);}});
   return {
-    setActive(value){active=value;if(value){init();if(!frame){last=performance.now();render(last);}}else{cancelAnimationFrame(frame);frame=0;}},
+    prepareMorph(){morphing=true;host.dataset.morphing='true';angle=initialAngle;tilt=0;detail=false;dirty=true;init();resize();},
+    endMorph(){morphing=false;host.dataset.morphing='false';last=performance.now();},
+    setActive(value){active=value;if(value){init();resize();if(!frame){last=performance.now();render(last);}}else{cancelAnimationFrame(frame);frame=0;}},
     setPaused(value){paused=value;}
   };
 }

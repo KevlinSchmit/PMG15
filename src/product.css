@@ -1,5 +1,5 @@
-.product-slide{background:radial-gradient(ellipse at 24% 44%,#f6fcfc 0,#e4eff0 39%,#e9f0e7 76%)}
-.product-stage{position:absolute;left:20px;top:100px;width:850px;height:650px;isolation:isolate}
+.product-slide{background:#d7e9e0}
+.product-stage{position:absolute;left:74px;top:210px;width:528px;height:585px;isolation:isolate}
 .product-halo{position:absolute;width:520px;height:520px;left:140px;top:65px;border:1px solid #8faeae35;border-radius:50%;background:radial-gradient(circle,#fff8,transparent 67%);z-index:-1}
 .product-halo:before,.product-halo:after{content:'';position:absolute;inset:35px;border:1px dashed #8faeae24;border-radius:50%}.product-halo:after{inset:-45px;border-style:solid;opacity:.45}
 #rod-viewport{position:absolute;inset:0;cursor:grab;touch-action:none;outline-offset:-8px}
@@ -11,7 +11,7 @@
 .product-orbit{position:absolute;left:205px;bottom:32px;width:425px;height:58px;border:1px solid #47757d40;border-radius:50%;transform:rotate(-4deg);pointer-events:none}
 .product-orbit:before{content:'';position:absolute;width:7px;height:7px;background:#00a6ca;border-radius:50%;top:5px;right:50px;box-shadow:0 0 12px #00bce999}
 .product-orbit>span{position:absolute;right:-44px;top:22px;font:10px 'DM Mono',monospace;color:#47757d}
-.product-copy{position:absolute;left:900px;right:74px;top:155px}.product-copy>.overline{font-size:10px;letter-spacing:.18em;color:#33717a}
+.product-copy{position:absolute;left:740px;right:74px;top:155px}.product-copy>.overline{font-size:10px;letter-spacing:.18em;color:#33717a}
 .product-copy h2{font-size:67px;line-height:1.05;margin:20px 0 22px;letter-spacing:-.035em}.product-copy h2 em{color:#28737a}
 .product-intro{font-size:20px;line-height:1.5;color:#52716e}
 .product-details{list-style:none;padding:0;margin:30px 0 26px;display:grid;gap:19px}.product-details>li{display:flex;gap:18px;border-top:1px solid #52716e26;padding-top:16px}
@@ -20,3 +20,14 @@
 .product-controls button>span{font-size:15px}.product-hint{display:block;font-size:9px;letter-spacing:.1em;opacity:.5;margin-top:17px}
 .product-footnote{position:absolute;left:74px;right:74px;bottom:32px;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.12em;opacity:.45}
 .portrait .product-stage{left:40px;top:250px;width:820px;height:710px}.portrait .product-halo{left:150px;top:95px}.portrait .product-copy{left:55px;right:55px;top:150px}.portrait .product-copy>.overline{font-size:14px}.portrait .product-copy h2{font-size:76px;margin:20px 0}.portrait .product-copy h2 br{display:none}.portrait .product-copy h2 em{margin-left:15px}.portrait .product-intro{display:none}.portrait .product-details{position:absolute;top:825px;left:0;right:0;grid-template-columns:repeat(3,1fr);gap:25px;margin:0}.portrait .product-details>li{gap:12px;padding-top:20px}.portrait .product-details h3{font-size:23px;line-height:1.25;min-height:57px}.portrait .product-details p{font-size:19px;line-height:1.5}.portrait .product-details>li>.mono{font-size:12px}.portrait .product-controls{position:absolute;top:1070px;left:0;right:0;gap:35px}.portrait .product-controls button{font-size:15px}.portrait .product-hint{position:absolute;top:1135px;font-size:12px}.portrait .product-footnote{left:55px;right:55px;bottom:35px;font-size:11px}
+
+/* The render retains the concept image's slot; decoration must not imply a new position. */
+.product-halo,.product-orbit{display:none}
+.product-angle{left:0;top:-45px;bottom:auto}.product-angle>span:first-child{font-size:22px}.product-angle>span:last-child{font-size:7px}
+.portrait .product-copy{left:373px;right:55px;top:280px}
+.portrait .product-copy h2{font-size:60px;line-height:1.1}.portrait .product-copy h2 br{display:block}.portrait .product-copy h2 em{margin-left:0}
+.portrait .product-intro{display:block;font-size:24px}
+.portrait .product-details{position:static;grid-template-columns:1fr;gap:28px;margin:35px 0}
+.portrait .product-details>li{padding-top:20px}.portrait .product-details h3{font-size:27px;min-height:0}.portrait .product-details p{font-size:22px;max-width:none}
+.portrait .product-controls{position:static;flex-wrap:wrap;gap:8px 20px}.portrait .product-controls button{font-size:12px}
+.portrait .product-hint{position:static;margin-top:22px;font-size:11px}

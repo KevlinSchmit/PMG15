@@ -80,6 +80,7 @@ function showSlide(index) {
     }
   }
   product.setActive(slide.id === 'product-360');
+  if(slide.id === 'solution') product.prepareMorph();
   enterSlide(slide, current, () => paused || reduceMotion.matches);
   // Decode nearby original diagrams before the next scene is revealed.
   for (const neighbour of [slides[current], slides[current + 1]]) {
@@ -91,7 +92,7 @@ async function goTo(index) {
   if (index === current || busy || document.querySelector('dialog[open]')) return;
   clearTimeout(sceneTimer);
   stopEntrances();
-  if (paused || reduceMotion.matches) { showSlide(index); return; }
+  if (paused || reduceMotion.matches) { product.endMorph();showSlide(index); return; }
   busy = true;
   document.body.classList.add('is-transitioning');
   try {
@@ -104,6 +105,7 @@ async function goTo(index) {
     busy = false;
     document.body.classList.remove('is-transitioning');
     stage.classList.remove('changing');
+    if(slides[current].id === 'product-360') product.endMorph();
   }
 }
 showSlide(current);

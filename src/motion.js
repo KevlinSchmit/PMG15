@@ -153,49 +153,31 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
   try {
     const encounter = [outgoing.id, incoming.id].every(id => ['in-action', 'protected-encounter'].includes(id));
     if (cut === 'breaking-wave') {
-      cleanups.push(waterSweep(overlay, animate, { full: true, duration: 2200, backwards: !backwards }));
-      // The crest reaches each original cover element before carrying it away.
-      // No screenshot of the page: these are the actual independent objects.
-      const targets = outgoing.querySelectorAll('h1>.word,.hero-caption,.start-button,.hero-rod,.hero-sun,.floating-label,.hero-authors,.depth-marker,.scene-object,.slide-kicker');
-      for (const [i, element] of [...targets].entries()) {
-        const rect = element.getBoundingClientRect();
-        const hit = Math.max(180, Math.min(940, 360 + (1 - rect.right / innerWidth) * 560));
-        animate(element, [
-          { opacity: 1, transform: 'translate3d(0,0,0) rotate(0)', filter: 'blur(0px)' },
-          { opacity: .9, transform: `translate3d(${-innerWidth*.12}px,${-35-i%3*18}px,0) rotate(${i%2?-8:5}deg)`, offset: .28, filter: 'blur(1px)' },
-          { opacity: 0, transform: `translate3d(${-innerWidth*.95}px,${(i%3-1)*innerHeight*.3}px,0) rotate(${i%2?-32:19}deg)`, filter: 'blur(7px)' }
-        ], { duration: 850, delay: hit, easing: 'cubic-bezier(.45,0,.8,.5)' });
-      }
-      outgoing.classList.add('is-departing');
-      animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { delay: 900, duration: 300 });
-      await Promise.race([sleep(1020), interrupted]);
+      // Freeze the existing illustration in its current pose. Only the broad
+      // wave moves; it never overwrites the rod's transform or animates the SVG.
+      const coverMotion=outgoing.getAnimations({subtree:true}).filter(a=>a.playState==='running');
+      coverMotion.forEach(a=>a.pause());
+      cleanups.push(()=>coverMotion.forEach(a=>{try{a.play();}catch{}}));
+      cleanups.push(waterSweep(overlay, animate, { full: true, duration: 1800, backwards: !backwards }));
+      await Promise.race([sleep(900), interrupted]);
       swapOnce();
-      animate(incoming, [{ opacity: 0 }, { opacity: 1 }], { duration: 500 });
     } else if (cut === 'blueprint' && incoming.id === 'product-360') {
-      cleanups.push(waterSweep(overlay, animate, { duration: 1600 }));
-      const source = outgoing.querySelector('.sketch-button');
+      const source = outgoing.querySelector('.sketch-button img');
       const rect = source.getBoundingClientRect();
-      const destination = incoming.querySelector('.product-stage').getBoundingClientRect();
       const sketch = document.createElement('div');
       sketch.className = 'transition-blueprint';
       sketch.style.cssText = `left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;height:${rect.height}px;`;
-      sketch.append(source.querySelector('img').cloneNode());overlay.append(sketch);
-      animate(sketch, [
-        { opacity: .8, transform: 'translate(0,0) scale(1)', filter: 'grayscale(1)' },
-        { opacity: .5, transform: `translate(${destination.left-rect.left+(destination.width-rect.width)/2}px,${destination.top-rect.top}px) scale(1.05)`, filter: 'grayscale(1) contrast(1.5)', offset: .55 },
-        { opacity: 0, transform: `translate(${destination.left-rect.left+(destination.width-rect.width)/2}px,${destination.top-rect.top}px) scale(1.08)`, filter: 'grayscale(0) blur(5px)' }
-      ], { duration: 1500 });
-      animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { duration: 450 });
-      await Promise.race([sleep(400), interrupted]);
+      sketch.append(source.cloneNode());overlay.append(sketch);
+      carriedSource=source;sourceVisibility=source.style.visibility;source.style.visibility='hidden';
+      // Both drawings occupy the exact same image rectangle. The solid model is
+      // held at its calibrated front pose until this material dissolve completes.
+      animate(sketch,[{opacity:1},{opacity:0}],{duration:1150,delay:200});
+      animate(outgoing,[{opacity:1},{opacity:0}],{duration:250});
+      animate(incoming.querySelector('#rod-viewport'),[{opacity:0},{opacity:1}],{duration:1150,delay:200});
+      animate(incoming.querySelector('.product-copy'),[{opacity:0},{opacity:1}],{duration:550,delay:450});
+      animate(incoming.querySelector('.product-angle'),[{opacity:0},{opacity:1}],{duration:400,delay:1100});
+      await Promise.race([sleep(200),interrupted]);
       swapOnce();
-      animate(incoming, [{ opacity: 0 }, { opacity: 1 }], { duration: 850 });
-      animate(incoming.querySelector('#rod-viewport'), [
-        { clipPath: 'inset(0 100% 0 0)', filter: 'brightness(1.8)' },
-        { clipPath: 'inset(0 0% 0 0)', filter: 'brightness(1)' }
-      ], { duration: 1050, delay: 150 });
-      const scanner = document.createElement('div');scanner.className='product-scan';overlay.append(scanner);
-      scanner.style.cssText=`top:${destination.top}px;height:${destination.height}px;left:${destination.left}px;`;
-      animate(scanner,[{transform:'translateX(0)',opacity:0},{opacity:.9,offset:.2},{transform:`translateX(${destination.width}px)`,opacity:0}],{duration:1200,delay:400});
     } else if (encounter) {
       cleanups.push(waterSweep(overlay, animate, { duration: 950, deep: true, backwards }));
       const camera = holdCamera(outgoing, overlay);

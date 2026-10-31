@@ -194,11 +194,16 @@ test('the new product and original visual proposition follow the concept slide',
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'in-action');
 });
 
-test('the breaking wave displaces cover objects and can be interrupted cleanly', async ({ page }) => {
+test('the cover wave leaves the original artwork stationary and can be interrupted cleanly', async ({ page }) => {
   await page.goto('/');
+  await expect(page.locator('.hero-waves')).toBeVisible();
   await page.keyboard.press('ArrowRight');
   await expect(page.locator('.breaking-wave')).toBeVisible();
-  await expect.poll(() => page.locator('.hero-copy h1>.word').first().evaluate(e => getComputedStyle(e).transform)).not.toBe('none');
+  const before=await page.locator('.hero-rod,.hero-waves').evaluateAll(elements=>elements.map(e=>({transform:getComputedStyle(e).transform,rect:e.getBoundingClientRect().toJSON()})));
+  await page.waitForTimeout(250);
+  const during=await page.locator('.hero-rod,.hero-waves').evaluateAll(elements=>elements.map(e=>({transform:getComputedStyle(e).transform,rect:e.getBoundingClientRect().toJSON()})));
+  expect(during).toEqual(before);
+  expect(await page.locator('.hero-rod').evaluate(e=>new DOMMatrixReadOnly(getComputedStyle(e).transform).a)).toBeGreaterThan(0);
   await page.getByRole('button', { name: 'Pause animations', exact: true }).click();
   await slide(page, 2);
   await expect(page.locator('.breaking-wave')).toHaveCount(0);
@@ -231,11 +236,42 @@ test('the solid product rotates, pauses, drags to a different view and resets wi
   const detail = await viewport.screenshot();
   expect(detail.equals(back)).toBe(false);
   await page.getByRole('button', { name: 'Reset product view' }).click();
-  await expect(viewport).toHaveAttribute('data-angle','0.1800');
+  await expect(viewport).toHaveAttribute('data-angle','0.0000');
   await expect(page.getByRole('button', { name: 'Toggle product detail view' })).toHaveAttribute('aria-pressed','false');
   await page.getByRole('button', { name: 'Resume product rotation' }).click();
   await page.getByRole('button', { name: 'Pause animations', exact: true }).click();
   const globalPause = await viewport.getAttribute('data-angle');
   await page.waitForTimeout(250);
   await expect(viewport).toHaveAttribute('data-angle',globalPause);
+});
+
+test('the concept becomes a solid at the same anchors before rotation starts on desktop and portrait', async ({ page }) => {
+  for(const width of [1440,390]) {
+    await page.setViewportSize({width,height:width===390?844:900});
+    await page.goto(`/?alignment=${width}#slide-4`);
+    const viewport=page.locator('#rod-viewport');
+    await expect(viewport).toHaveAttribute('data-ready','true');
+    const source=await page.locator('#solution .sketch-button img').evaluate(img=>{
+      const r=img.getBoundingClientRect(),scale=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight);
+      const x=r.left+(r.width-img.naturalWidth*scale)/2,y=r.top+(r.height-img.naturalHeight*scale)/2;
+      return {rect:r.toJSON(),tip:{x:x+902*scale,y:y+44*scale},butt:{x:x+182*scale,y:y+1462*scale}};
+    });
+    await page.keyboard.press('ArrowRight');
+    await page.evaluate(()=>document.getAnimations().forEach(a=>a.pause()));
+    await expect(page.locator('.transition-blueprint')).toBeVisible();
+    const carried=await page.locator('.transition-blueprint').boundingBox();
+    for(const field of ['x','y','width','height'])expect(carried[field]).toBeCloseTo(source.rect[field],1);
+    await expect(page.locator('#product-360')).toHaveClass(/is-active/);
+    await expect(viewport).toHaveAttribute('data-angle','0.0000');
+    const projected=JSON.parse(await viewport.getAttribute('data-landmarks'));
+    for(const name of ['tip','butt'])for(const axis of ['x','y'])expect(projected[name][axis]).toBeCloseTo(source[name][axis],0);
+    const slot=await viewport.boundingBox();
+    await page.waitForTimeout(250);
+    expect(await viewport.boundingBox()).toEqual(slot);
+    await expect(viewport).toHaveAttribute('data-angle','0.0000');
+    await page.evaluate(()=>document.getAnimations().forEach(a=>a.play()));
+    await idle(page);
+    await expect(viewport).toHaveAttribute('data-morphing','false');
+    await expect.poll(async()=>Number(await viewport.getAttribute('data-angle'))).toBeGreaterThan(.03);
+  }
 });
