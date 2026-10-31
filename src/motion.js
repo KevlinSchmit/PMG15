@@ -166,11 +166,6 @@ export async function transitionSlides(outgoing, incoming, overlay, backwards, s
           { opacity: 0, transform: `translate3d(${-innerWidth*.95}px,${(i%3-1)*innerHeight*.3}px,0) rotate(${i%2?-32:19}deg)`, filter: 'blur(7px)' }
         ], { duration: 850, delay: hit, easing: 'cubic-bezier(.45,0,.8,.5)' });
       }
-      animate(outgoing.querySelector('.hero-waves'), [
-        { transform: 'translate(0,0) scale(1)', opacity: 1 },
-        { transform: 'translate(-8%,-25%) scale(1.35)', opacity: .8, offset: .35 },
-        { transform: 'translate(-90%,-80%) scale(2)', opacity: 0 }
-      ], { duration: 1300 });
       outgoing.classList.add('is-departing');
       animate(outgoing, [{ opacity: 1 }, { opacity: 0 }], { delay: 900, duration: 300 });
       await Promise.race([sleep(1020), interrupted]);

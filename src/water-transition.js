@@ -32,13 +32,14 @@ function makeWaterMaps() {
     const crest=Math.exp(-Math.pow((u-.94)*8,2));
     const light=n*.4+shine*.5+crest*.25;
     const i=(y*size+x)*4;
-    pixels.data.set([8+light*82,60+light*112,82+light*117,clamp(u*2)*210],i);
+    // Muted sage shadows and warm highlights match the deck's mint/ink palette.
+    pixels.data.set([49+light*107,73+light*112,67+light*94,clamp(u*2)*210],i);
     // Multiscale ridges produce connected, torn foam rather than circular confetti.
     const ridge=1-Math.abs(n*2-1);
     const coverage=clamp((u-.66+(noise(x*.022,y*.024)-.5)*.48)*4);
     const lace=clamp((ridge-.61)*4.2)*(fine*.35+.65);
     const alpha=coverage*lace*235;
-    foam.data.set([209+fine*40,235+fine*20,230+fine*24,alpha],i);
+    foam.data.set([232+fine*11,237+fine*10,220+fine*14,alpha],i);
   }
   sc.putImageData(pixels,0,0);fc.putImageData(foam,0,0);
   waterMaps={surface,froth};return waterMaps;
@@ -71,7 +72,7 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
       // A rolling, curved wall of water. The tail is transparent so the next page
       // emerges from the receding water rather than appearing above it.
       const body=ctx.createLinearGradient(head-w*1.05,0,head+w*.13,0);
-      for(const [p,c] of [[0,'#164f6200'],[.18,'#0a425a35'],[.46,'#063a59e8'],[.70,'#056780f7'],[.86,'#14a9bde8'],[.94,'#a9edf1da'],[1,'#c9f6f100']])body.addColorStop(p,c);
+      for(const [p,c] of [[0,'#365a4800'],[.18,'#365a4835'],[.46,'#264c42e8'],[.70,'#537969f7'],[.86,'#9bb8a0e8'],[.94,'#dde7d2da'],[1,'#f3f4e900']])body.addColorStop(p,c);
       ctx.beginPath();ctx.moveTo(head-w*1.2,-30);
       ctx.lineTo(front(-30),-30);
       for(let y=-30;y<=h+30;y+=9)ctx.lineTo(front(y),y);
@@ -89,12 +90,12 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
         const y=h*j/18;
         ctx.beginPath();ctx.moveTo(head-w*1.1,y+Math.sin(j)*35);
         ctx.bezierCurveTo(head-w*.65,y-h*.15,head-w*.23,y+h*.15,front(y),y);
-        ctx.lineWidth=.6+(j%4)*.7;ctx.strokeStyle=`rgba(${j%3?'132,230,235':'0,31,58'},${.025+(j%3)*.025})`;ctx.stroke();
+        ctx.lineWidth=.6+(j%4)*.7;ctx.strokeStyle=`rgba(${j%3?'176,205,178':'24,53,46'},${.025+(j%3)*.025})`;ctx.stroke();
       }
       for(let j=0;j<13;j++) {
         ctx.beginPath();
         for(let y=-20;y<=h+20;y+=8){const x=front(y)-j*13-12+Math.sin(y*.022+j*.7-t*6)*(8+j);if(y===-20)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
-        ctx.lineWidth=2+j*.6;ctx.strokeStyle=`rgba(186,244,240,${.21-j*.012})`;ctx.stroke();
+        ctx.lineWidth=2+j*.6;ctx.strokeStyle=`rgba(199,217,189,${.21-j*.012})`;ctx.stroke();
       }
       ctx.restore();
       for(let y=0;y<h;y+=2){
@@ -105,7 +106,7 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
       for(let j=7;j>=0;j--) {
         ctx.beginPath();
         for(let y=-20;y<h+30;y+=6){const x=front(y)-j*5+Math.sin(y*.027-t*8)*7;if(y===-20)ctx.moveTo(x,y);else ctx.lineTo(x,y);}
-        ctx.strokeStyle=j>4?'rgba(3,66,89,.16)':`rgba(219,255,250,${.18+(4-j)*.1})`;
+        ctx.strokeStyle=j>4?'rgba(43,73,60,.16)':`rgba(244,246,229,${.18+(4-j)*.1})`;
         ctx.lineWidth=j*4+2;ctx.stroke();
       }
       // Dense foam vortices along the breaking lip; bubbles retain their identities.
@@ -116,14 +117,14 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
         const yy=y+Math.cos(p.phase+t*7)*12;
         const r=.25+p.r*p.r*1.8;
         ctx.beginPath();ctx.ellipse(x,yy,r*(1+p.speed),r*.65, -.5,0,TAU);
-        ctx.fillStyle=`rgba(231,255,250,${(.15+p.r*.6)*fade})`;ctx.fill();
+        ctx.fillStyle=`rgba(243,246,230,${(.15+p.r*.6)*fade})`;ctx.fill();
         // Spray leaves the lip with momentum, then falls under gravity.
         if(p.spread>.74) {
           const life=(t*2+p.drift)%1;
           const sx=front(y)+life*(40+p.speed*100);
           const sy=y-life*70+life*life*120;
           ctx.beginPath();ctx.ellipse(sx,sy,Math.max(.5,r*.35),Math.max(1,r*.8),-.6,0,TAU);
-          ctx.fillStyle=`rgba(229,253,255,${(1-life)*fade*.8})`;ctx.fill();
+          ctx.fillStyle=`rgba(241,244,228,${(1-life)*fade*.8})`;ctx.fill();
         }
       }
       // Close-to-lens droplets move more slowly, giving a second depth plane.
@@ -131,7 +132,7 @@ export function waterSweep(overlay, animate, { duration = 2200, backwards = fals
         const p=foam[i];const x=front(p.y*h)+p.spread*140;
         const r=2+p.r*7;const y=p.y*h+t*t*70;
         const g=ctx.createRadialGradient(x-r*.3,y-r*.3,.2,x,y,r);
-        g.addColorStop(0,`rgba(244,255,255,${fade*.8})`);g.addColorStop(.4,`rgba(92,188,207,${fade*.1})`);g.addColorStop(1,`rgba(208,250,255,${fade*.5})`);
+        g.addColorStop(0,`rgba(246,247,232,${fade*.8})`);g.addColorStop(.4,`rgba(143,168,140,${fade*.1})`);g.addColorStop(1,`rgba(218,230,205,${fade*.5})`);
         ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,r,0,TAU);ctx.fill();
       }
     } else {
