@@ -19,7 +19,6 @@ test('refreshing the final scene restarts at page one with working navigation', 
   await page.keyboard.press('ArrowRight');
   await slide(page, 2);
 });
-
 test('a legacy pause and an explicit pause do not silently suppress motion after refresh', async ({ page }) => {
   await page.goto('/');
   await page.evaluate(() => localStorage.setItem('blue-catch-motion', 'off'));
@@ -53,8 +52,7 @@ test('all scenes have object transitions, steady typography, and working navigat
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('.transition-ocean')).toHaveClass(/play/);
     await expect(page.locator('.transition-ocean h1,.transition-ocean h2,.transition-ocean li,.transition-source')).toHaveCount(0);
-    if(i===4) await expect(page.locator('#solution')).toHaveClass(/is-morph-source/);
-    else await expect(page.locator('.transition-object svg')).toHaveCount(1);
+    await expect(page.locator('.transition-object svg')).toHaveCount(1);
     await slide(page, i + 1);
     await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', transitions[i - 1]);
     await expect(page.locator('.slide:not([inert])')).toHaveCount(1);
@@ -83,7 +81,7 @@ test('pausing an object transition finishes navigation and removes its overlay',
 });
 
 test('redrawn charts animate to the exact source figures and retain original graphics', async ({ page }) => {
-  await page.goto('/#slide-8');
+  await page.goto('/#slide-6');
   for (const value of ['$941,300,000', '$740,520,000', '$3,495,000']) {
     await expect(page.locator('#market-chart .market-ledger strong', { hasText: value })).toBeVisible();
   }
@@ -169,55 +167,4 @@ test('portrait slides fit without scrolling and reduced motion shows final conte
   }
   expect(issues).toEqual([]);
   await expect(page.locator('#funds-chart .donut-center strong')).toHaveText('$1,140,403.97');
-});
-
-test('the sketch and solid retain their pose through the cut, then rotate; close up zooms without advancing', async ({page})=>{
-  for(const width of [1440,390]) {
-    await page.setViewportSize({width,height:width===390?844:900});
-    await page.goto(`/?rod=${width}#slide-4`);
-    const viewport=page.locator('#rod-viewport');
-    await expect(viewport).toHaveAttribute('data-ready','true');
-    await expect(page.locator('#product-360 iframe')).toHaveCount(0);
-    const expected=await page.locator('#solution .sketch-button img').evaluate(img=>{
-      const r=img.getBoundingClientRect(),s=Math.min(r.width/img.naturalWidth,r.height/img.naturalHeight);
-      const x=r.left+(r.width-img.naturalWidth*s)/2,y=r.top+(r.height-img.naturalHeight*s)/2;
-      return {rect:r.toJSON(),background:getComputedStyle(img.closest('.slide')).backgroundColor.match(/\d+/g).slice(0,3).map(Number),tip:{x:x+902*s,y:y+44*s},butt:{x:x+182*s,y:y+1462*s}};
-    });
-    const shot=await page.screenshot({clip:{x:Math.round(expected.rect.x+expected.rect.width*.2),y:Math.round(expected.rect.y+expected.rect.height*.15),width:1,height:1}});
-    const pixel=await page.evaluate(async data=>{
-      const img=new Image();img.src=data;await img.decode();
-      const c=document.createElement('canvas');c.width=c.height=1;const ctx=c.getContext('2d');ctx.drawImage(img,0,0);
-      return [...ctx.getImageData(0,0,1,1).data].slice(0,3);
-    },'data:image/png;base64,'+shot.toString('base64'));
-    pixel.forEach((value,i)=>expect(Math.abs(value-expected.background[i])).toBeLessThan(8));
-    await expect(viewport).toHaveAttribute('data-angle','0.0000');
-    await page.keyboard.press('ArrowRight');
-    await page.evaluate(()=>document.getAnimations().forEach(a=>a.pause()));
-    await expect(page.locator('#product-360')).toHaveClass(/is-active/);
-    await expect(page.locator('.transition-ocean img')).toHaveCount(0);
-    await expect(viewport).toHaveAttribute('data-angle','0.0000');
-    const rect=await viewport.boundingBox();
-    for(const k of ['x','y','width','height'])expect(rect[k]).toBeCloseTo(expected.rect[k],1);
-    const actual=JSON.parse(await viewport.getAttribute('data-landmarks'));
-    for(const p of ['tip','butt'])for(const k of ['x','y'])expect(actual[p][k]).toBeCloseTo(expected[p][k],0);
-    await page.waitForTimeout(180);
-    await expect(viewport).toHaveAttribute('data-angle','0.0000');
-    await page.evaluate(()=>document.getAnimations().forEach(a=>a.play()));
-    await idle(page);
-    await expect.poll(async()=>Number(await viewport.getAttribute('data-angle'))).toBeGreaterThan(.05);
-    await page.getByRole('button',{name:'Pause product rotation',exact:true}).click();
-    const before=JSON.parse(await viewport.getAttribute('data-landmarks'));
-    const distance=p=>Math.hypot(p.tip.x-p.butt.x,p.tip.y-p.butt.y);
-    const button=await page.getByRole('button',{name:'Close up',exact:true}).boundingBox();
-    const scene=await page.locator('#product-360').boundingBox();
-    expect(button.y+button.height).toBeLessThan(scene.y+scene.height-4);
-    await page.getByRole('button',{name:'Close up',exact:true}).click();
-    expect(await page.locator('#product-360').evaluate(e=>e.scrollTop)).toBe(0);
-    await expect(page.getByRole('button',{name:'Full view',exact:true})).toHaveAttribute('aria-pressed','true');
-    await expect.poll(async()=>distance(JSON.parse(await viewport.getAttribute('data-landmarks')))).toBeGreaterThan(distance(before)*1.9);
-    await expect(page.locator('#slide-position')).toHaveText('05 / 13');
-    await page.getByRole('button',{name:'Full view',exact:true}).click();
-    await expect(page.getByRole('button',{name:'Close up',exact:true})).toHaveAttribute('aria-pressed','false');
-    await expect.poll(async()=>distance(JSON.parse(await viewport.getAttribute('data-landmarks')))).toBeCloseTo(distance(before),0);
-  }
 });
