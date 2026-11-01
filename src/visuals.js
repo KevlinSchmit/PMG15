@@ -34,20 +34,21 @@ export function mountCharts() {
     <div class="market-basin basin-som"><span class="mono">SOM</span><strong>${currency(3495000)}</strong><small>Serviceable Obtainable Market<br>Annual</small></div>
   </div><div class="market-ledger">${marketRows.map(([key,label,value,description],i)=>`<div class="market-ledger-row" style="--row:${i}"><span class="ledger-key mono">${key}</span><div><h3>${key} – ${label}</h3><strong data-count="${value}">${currency(value)}</strong><p>${description}</p></div><span class="ledger-dot dot-${key.toLowerCase()}"></span></div>`).join('')}</div>`;
   const items = [
-    ['Materials',357268,'Cameras, AI chips, screens and rod components','#224f4b'],
-    ['Labor & manufacturing',153115,'Rod assembly and system integration','#82b6a4'],
+    ['Materials',711250,'Cameras, AI chips, screens and rod components','#224f4b'],
+    ['Labor & manufacturing',192858.09,'Rod assembly and system integration','#82b6a4'],
     ['Marketing',126000,'Online advertising and offline promotions','#f16c40'],
-    ['Operations & distribution',101266,'Rent, storage, packaging, shipping and fees','#c5d8bc']
+    ['Operations & distribution',110295.88,'Rent, storage, packaging, shipping and fees','#c5d8bc']
   ];
+  const total = items.reduce((sum, [, value]) => sum + value, 0);
   let start = -90;
   const paths=items.map(([label,value,,color],i)=>{
-    const sweep=value/737649*360;
+    const sweep=value/total*360;
     const point=angle=>[260+184*Math.cos(angle*Math.PI/180),260+184*Math.sin(angle*Math.PI/180)];
     const a=point(start+1),b=point(start+sweep-1);
     const d=`M${a.join(' ')}A184 184 0 ${sweep>180?1:0} 1 ${b.join(' ')}`;
     start+=sweep;
     return `<path class="fund-arc" d="${d}" stroke="${color}" pathLength="1" style="--arc:${i}" data-label="${label}" aria-label="${label}: ${currency(value)}"/>`;
   }).join('');
-  document.querySelector('#funds-chart').innerHTML = `<div class="funds-donut"><svg viewBox="0 0 520 520" role="img" aria-label="Planned spending: $737,649. Materials $357,268; labor and manufacturing $153,115; marketing $126,000; operations and distribution $101,266."><circle class="fund-track" cx="260" cy="260" r="184"/>${paths}<circle class="funds-inner-orbit" cx="260" cy="260" r="140"/></svg><div class="donut-center"><span class="mono">PLANNED SPENDING</span><strong data-count="737649">$737,649</strong><span>Blue Catch</span></div><span class="donut-coordinate mono">2025 / PROJECTED SPENDING</span></div>
+  document.querySelector('#funds-chart').innerHTML = `<div class="funds-donut"><svg viewBox="0 0 520 520" role="img" aria-label="Planned spending: ${currency(total)}. Materials ${currency(items[0][1])}; labor and manufacturing ${currency(items[1][1])}; marketing ${currency(items[2][1])}; operations and distribution ${currency(items[3][1])}."><circle class="fund-track" cx="260" cy="260" r="184"/>${paths}<circle class="funds-inner-orbit" cx="260" cy="260" r="140"/></svg><div class="donut-center"><span class="mono">PLANNED SPENDING</span><strong data-count="${total}">${currency(total)}</strong><span>Blue Catch</span></div><span class="donut-coordinate mono">2025 / PROJECTED SPENDING</span></div>
     <div class="funds-ledger">${items.map(([label,value,description,color],i)=>`<div class="funds-ledger-row" style="--row:${i};--fund-color:${color}"><span class="funds-swatch"></span><div><h3>${label}</h3><p>${description}</p></div><strong data-count="${value}">${currency(value)}</strong></div>`).join('')}</div>`;
 }
