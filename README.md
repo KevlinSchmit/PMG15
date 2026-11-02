@@ -17,7 +17,7 @@ npm run build
 npm run preview -- --port 5173
 ```
 
-To create a single downloadable presentation that opens directly in a browser, run `npm run build` followed by `python tools/export-standalone.py`. The resulting `/workspace/Blue-Catch.html` includes the complete site, local fonts, original graphics, all 23 source pages, and the downloadable original PDF. No server or internet connection is required for the presentation itself; the original cited websites and Google Sheets link still require internet access.
+To create a single downloadable presentation that opens directly in a browser, run `npm run build` followed by `python tools/export-standalone.py`. The resulting `/workspace/Blue-Catch.html` includes the presentation, local fonts, graphics, and current slide overview. The original cited websites and Google Sheets link still require internet access.
 
 ## Present
 
@@ -32,13 +32,14 @@ To create a single downloadable presentation that opens directly in a browser, r
 - The TAM/SAM/SOM chart builds its nested circles and reveals the original market figures. The funds chart draws its four donut segments and reveals the original amounts. Both retain an **Original graphic** link.
 - TAM, SAM, and SOM are summarized together on one market slide.
 - Open original diagrams and zoom to 400% for details.
-- The original-deck icon opens all 23 source pages, with keyboard navigation and a PDF download. **Sources** opens the original chart citations.
+- The middle icon at bottom right opens an overview of all 13 current slides. Select any preview to jump directly there. The current slide is highlighted; arrow keys move between previews, Home / End select the first / last preview, and Enter or Space opens it. Escape closes the overview and restores focus. **Sources** opens the original chart citations.
+- Visual Value Proposition follows Our Solution as slide 7.
 - The pause icon stops motion and makes slide changes immediate for the current visit. Refresh starts motion again unless the system requests reduced motion. A prior saved pause no longer silently disables animation. Reduced motion shows all final chart values and encounter states immediately.
 - Refresh always returns to page 1 and updates the URL to `#slide-1`. Opening a direct URL such as `#slide-5` still works. Inactive slides are hidden from focus and assistive technology. Portrait screens use a taller, fitted slide layout.
 
 ## Content fidelity
 
-`public/Blue-Catch-Pitch-Deck.pdf` is an unchanged copy of the provided PDF. `public/originals/` contains faithful page renders for the source viewer. `public/assets/` contains presentation images; `original-waves.svg` preserves the cover's original vector wave artwork. `public/deck-content.json` preserves the extracted source text by page. `src/scene-art.js` contains the new decorative vector illustrations; they are separate from the original diagrams and data. All fonts and assets are served locally.
+`public/Blue-Catch-Pitch-Deck.pdf` is an unchanged copy of the provided PDF. `public/originals/` contains faithful page renders for reference. `public/assets/` contains presentation images; `original-waves.svg` preserves the cover's original vector wave artwork. `public/deck-content.json` preserves the extracted source text by page. `src/scene-art.js` contains the new decorative vector illustrations; they are separate from the original diagrams and data. All fonts and assets are served locally.
 
 Andrew is an illustrative consumer persona. His representative fishing photograph, `public/assets/consumer-angler.jpg`, is an unmodified public-domain U.S. Army photograph by Staff Sgt. Emily Russell: [Reel Adventure; Troopers Fish With Pro Salt Water Angler](https://commons.wikimedia.org/wiki/File:Reel_Adventure;_Troopers_Fish_With_Pro_Salt_Water_Angler_DVIDS122093.jpg). The photographed people are not being identified as Andrew or presented as interviewed customers.
 
@@ -46,4 +47,6 @@ The page keeps the deck's stated market values and arithmetic exactly as supplie
 
 ## Browser checks
 
-Run `npm test` for the Playwright regression suite. It checks Andrew’s profile and photo, slide order, refresh playback, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
+Run `npm test` for the Playwright regression suite. It checks Andrew’s profile and photo, slide order, overview previews and keyboard/direct navigation on desktop and portrait, refresh playback, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
+
+Overview previews are keyed by slide ID, so numbering and order follow the current deck automatically. After changing slide content, run the dev server and `node tools/capture-slide-previews.mjs` to refresh the local previews before building.

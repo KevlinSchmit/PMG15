@@ -65,23 +65,23 @@ test('all scenes have object transitions, steady typography, and working navigat
 });
 
 test('pausing an object transition finishes navigation and removes its overlay', async ({ page }) => {
-  await page.goto('/#slide-7');
+  await page.goto('/#slide-8');
   await page.keyboard.press('ArrowRight');
   await expect(page.locator('.transition-object')).toHaveCount(1);
   await page.getByRole('button', { name: 'Pause animations' }).click();
-  await slide(page, 8);
+  await slide(page, 9);
   await expect(page.locator('.transition-ocean')).not.toHaveClass(/play/);
   await expect(page.locator('.transition-object')).toHaveCount(0);
   expect(await page.locator('.slide.is-active').evaluate(scene => scene.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
   await page.keyboard.press('ArrowLeft');
-  await slide(page, 7);
+  await slide(page, 8);
   await page.getByRole('button', { name: 'Resume animations' }).click();
   await page.keyboard.press('ArrowRight');
-  await slide(page, 8);
+  await slide(page, 9);
 });
 
 test('redrawn charts animate to the exact source figures and retain original graphics', async ({ page }) => {
-  await page.goto('/#slide-7');
+  await page.goto('/#slide-8');
   for (const value of ['$941,300,000', '$740,520,000', '$3,495,000']) {
     await expect(page.locator('#market-chart .market-ledger strong', { hasText: value })).toBeVisible();
   }
@@ -103,11 +103,11 @@ test('requested slide order, product copy, and source dialogs are preserved', as
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'value');
   await expect(page.locator('#product-360')).toHaveCount(0);
   await expect(page.locator('#solution .product-model-embed')).toHaveCount(1);
-  await page.goto('/#slide-7');
-  await slide(page, 7);
+  await page.goto('/#slide-8');
+  await slide(page, 8);
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'market-overview');
   await page.keyboard.press('ArrowRight');
-  await slide(page, 8);
+  await slide(page, 9);
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'swot');
   await expect(page.locator('#swot .source-trigger')).toBeVisible();
   await page.locator('#swot .source-trigger').click();
@@ -187,3 +187,61 @@ test('Andrew’s brief consumer profile follows the cover with a local fishing p
   await slide(page, 3);
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'challenge');
 });
+
+
+test('the visual value proposition now follows the solution', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#slide-6');
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'solution');
+  await page.keyboard.press('ArrowRight');
+  await slide(page, 7);
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'visual-value');
+  await page.keyboard.press('ArrowRight');
+  await slide(page, 8);
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'market-overview');
+});
+
+for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+  test(`current deck overview supports direct jumps and keyboard navigation at ${viewport.width}px`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto('/#slide-2');
+    const toggle = page.getByRole('button', { name: 'Open slide overview' });
+    await toggle.click();
+    const overview = page.getByRole('dialog', { name: 'Slide overview' });
+    await expect(overview).toBeVisible();
+    const cards = overview.locator('.overview-slide');
+    await expect(cards).toHaveCount(13);
+    await expect(cards.nth(1)).toHaveAttribute('aria-current', 'page');
+    await expect(cards.nth(1)).toBeFocused();
+    const order = await page.locator('#presentation .slide').evaluateAll(slides => slides.map(slide => slide.dataset.title));
+    expect(await cards.locator('.overview-title').allTextContents()).toEqual(order);
+    await expect(cards.nth(6)).toHaveAccessibleName('Go to slide 7: Visual Value Proposition');
+    await expect(cards.nth(6).locator('img')).toHaveAttribute('src', '/assets/slide-previews/visual-value.png');
+    await cards.nth(6).click();
+    await expect(overview).not.toBeVisible();
+    await slide(page, 7);
+    await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'visual-value');
+    await expect(page).toHaveURL(/#slide-7$/);
+    await toggle.click();
+    await expect(cards.nth(6)).toHaveAttribute('aria-current', 'page');
+    await page.keyboard.press('End');
+    await expect(cards.last()).toBeFocused();
+    await expect.poll(() => cards.last().locator('img').evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
+    await page.keyboard.press('Enter');
+    await slide(page, 13);
+    await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'next-step');
+    await toggle.click();
+    await expect(cards.last()).toHaveAttribute('aria-current', 'page');
+    await page.keyboard.press('Home');
+    await page.keyboard.press(' ');
+    await slide(page, 1);
+    await toggle.click();
+    await page.keyboard.press('ArrowRight');
+    await expect(cards.nth(1)).toBeFocused();
+    await page.keyboard.press('Escape');
+    await expect(overview).not.toBeVisible();
+    await expect(toggle).toBeFocused();
+    await slide(page, 1);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
+  });
+}

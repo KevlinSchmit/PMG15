@@ -6,6 +6,7 @@ import './product.css';
 import './scene.css';
 import './charts.css';
 import './motion.css';
+import './overview.css';
 import { mountScenes, mountCharts } from './visuals.js';
 import { prepareMotion, enterSlide, stopEntrances, transitionSlides, finishTransition } from './motion.js';
 
@@ -82,12 +83,13 @@ function showSlide(index) {
     if (neighbour) $$('img', neighbour).forEach(image => { image.loading = 'eager'; image.decode?.().catch(() => {}); });
   }
 }
-async function goTo(index) {
+async function goTo(index, { immediate = false } = {}) {
   index = Math.max(0, Math.min(slides.length - 1, index));
-  if (index === current || busy || document.querySelector('dialog[open]')) return;
+  if (immediate && busy) finishTransition();
+  if (index === current || (busy && !immediate) || document.querySelector('dialog[open]')) return;
   clearTimeout(sceneTimer);
   stopEntrances();
-  if (paused || reduceMotion.matches) { showSlide(index); return; }
+  if (immediate || paused || reduceMotion.matches) { showSlide(index); return; }
   busy = true;
   document.body.classList.add('is-transitioning');
   try {
@@ -198,35 +200,43 @@ $('#zoom-in').addEventListener('click', () => { zoom = Math.min(4, zoom + .5); a
 $('#zoom-out').addEventListener('click', () => { zoom = Math.max(1, zoom - .5); applyZoom(); });
 window.addEventListener('resize', () => { if (imageDialog.open) fitImage(); });
 
-let deckPage = 1;
-const pagePath = number => window.__BLUE_CATCH_PAGES__?.[number - 1] || `/originals/page-${String(number).padStart(2, '0')}.webp`;
-for (let i = 1; i <= 23; i++) {
+const overviewGrid = $('.deck-overview-grid');
+$('#overview-count').textContent = `${slides.length} SLIDES`;
+const overviewButtons = slides.map((slide, index) => {
   const button = document.createElement('button');
-  button.setAttribute('aria-label', `Show original page ${i}`);
-  button.innerHTML = `<img src="${pagePath(i)}" alt="" loading="lazy"><span>${String(i).padStart(2, '0')}</span>`;
-  button.addEventListener('click', () => selectDeckPage(i));
-  $('.deck-thumbnails').append(button);
-}
-function selectDeckPage(number) {
-  deckPage = Math.max(1, Math.min(23, number));
-  $('#deck-page').src = pagePath(deckPage);
-  $('#deck-page').alt = `Original Blue Catch pitch deck page ${deckPage} of 23`;
-  $('#deck-position').textContent = `${String(deckPage).padStart(2, '0')} / 23`;
-  $('#deck-prev').disabled = deckPage === 1;
-  $('#deck-next').disabled = deckPage === 23;
-  $$('.deck-thumbnails button').forEach((button, i) => {
-    button.classList.toggle('active', i + 1 === deckPage);
-    if (i + 1 === deckPage) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
+  button.type = 'button';
+  button.className = 'overview-slide';
+  button.setAttribute('aria-label', `Go to slide ${index + 1}: ${slide.dataset.title}`);
+  button.innerHTML = `<span class="overview-preview"><img alt="" width="480" height="270" loading="lazy"></span><span class="overview-meta"><span class="overview-number mono">${String(index + 1).padStart(2, '0')}</span><span class="overview-title"></span><span class="overview-current mono">CURRENT</span></span>`;
+  $('img', button).src = window.__BLUE_CATCH_PREVIEWS__?.[slide.id] || `/assets/slide-previews/${slide.id}.png`;
+  $('.overview-title', button).textContent = slide.dataset.title;
+  button.addEventListener('click', () => {
+    deckDialog.close();
+    goTo(index, { immediate: true });
   });
-  const thumbnail = $$('.deck-thumbnails button')[deckPage - 1];
-  thumbnail.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'instant' });
-}
-$$('[data-deck]').forEach(button => button.addEventListener('click', () => {
-  showDialog(deckDialog, button);
-  selectDeckPage(Number(button.dataset.deck));
-}));
-$('#deck-prev').addEventListener('click', () => selectDeckPage(deckPage - 1));
-$('#deck-next').addEventListener('click', () => selectDeckPage(deckPage + 1));
+  overviewGrid.append(button);
+  return button;
+});
+$('.overview-toggle').addEventListener('click', event => {
+  finishTransition();
+  overviewButtons.forEach((button, index) => {
+    if (index === current) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  });
+  showDialog(deckDialog, event.currentTarget);
+  overviewButtons[current].focus({ preventScroll: true });
+  overviewButtons[current].scrollIntoView({ block: 'nearest', behavior: 'instant' });
+});
+overviewGrid.addEventListener('keydown', event => {
+  if (event.altKey || event.ctrlKey || event.metaKey) return;
+  const index = overviewButtons.indexOf(event.target);
+  if (index < 0) return;
+  const columns = getComputedStyle(overviewGrid).gridTemplateColumns.split(' ').length;
+  const targets = { ArrowRight: index + 1, ArrowLeft: index - 1, ArrowDown: index + columns, ArrowUp: index - columns, Home: 0, End: slides.length - 1 };
+  if (!(event.key in targets)) return;
+  event.preventDefault();
+  overviewButtons[Math.max(0, Math.min(slides.length - 1, targets[event.key]))].focus();
+});
 
 $$('[data-sources]').forEach(button => button.addEventListener('click', () => showDialog(document.getElementById(button.dataset.sources), button)));
 const presentButton = $('.present-button');
@@ -245,11 +255,6 @@ document.addEventListener('fullscreenchange', () => {
 });
 document.addEventListener('keydown', event => {
   if (event.repeat) return;
-  if (deckDialog.open) {
-    if (['ArrowRight', ' '].includes(event.key)) { event.preventDefault(); selectDeckPage(deckPage + 1); }
-    if (event.key === 'ArrowLeft') { event.preventDefault(); selectDeckPage(deckPage - 1); }
-    return;
-  }
   if (document.querySelector('dialog[open]')) return;
   if (event.target.closest('input,textarea,select,[contenteditable="true"]')) return;
   if (event.altKey || event.ctrlKey || event.metaKey) return;

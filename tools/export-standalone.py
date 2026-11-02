@@ -28,8 +28,9 @@ html = html.replace(css_link[0], f"<style>{css}</style>")
 
 script_link = re.search(r'<script[^>]*src="([^"]+)"[^>]*></script>', html)
 script = (dist / script_link[1].lstrip("/")).read_text()
-pages = [data_uri(f"/originals/page-{i:02}.webp") for i in range(1, 24)]
-script = "window.__BLUE_CATCH_PAGES__=" + json.dumps(pages) + ";\n" + script
+previews = {path.stem: data_uri(f"/assets/slide-previews/{path.name}")
+            for path in sorted((dist / "assets/slide-previews").glob("*.png"))}
+script = "window.__BLUE_CATCH_PREVIEWS__=" + json.dumps(previews) + ";\n" + script
 # Keep the compiled module deferred, after HTML parsing just like Vite's entry.
 html = html.replace(script_link[0], '<script type="module">' + script.replace('</script', '<\\/script') + '</script>')
 
