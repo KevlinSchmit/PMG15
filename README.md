@@ -1,6 +1,6 @@
 # Blue Catch — interactive motion story
 
-A responsive, animated, 13-slide presentation built directly from **Group 16 Blue Catch Pitch Deck.pdf**. The product concept combines species recognition, automatic hook retraction, a rod-mounted display, and a signaling float on one concise solution slide. A dedicated 360° product-study slide presents the complete smart fishing system. TAM, SAM, and SOM are consolidated into one market slide with headline values and calculation takeaways. A final Next Step slide introduces the smart fishing net expansion. The market and funding charts are redrawn in the presentation's palette. Original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
+A responsive, animated, 13-slide presentation built from **Group 16 Blue Catch Pitch Deck.pdf**. Andrew’s brief consumer profile follows the cover, introducing a weekend sea angler who encounters unwanted bycatch. The solution slide combines an interactive 360° product view with species recognition, automatic hook retraction, a rod-mounted display, and a signaling float. TAM, SAM, and SOM are consolidated into one market slide with headline values and calculation takeaways. A final Next Step slide introduces the smart fishing net expansion. The market and funding charts are redrawn in the presentation's palette. Original images remain available in the source viewer. The product demonstration is illustrative, not a working AI system.
 
 ## Run
 
@@ -27,7 +27,8 @@ To create a single downloadable presentation that opens directly in a browser, r
 - Scenes use topic-related illustrated objects to carry their transitions: schools of fish, branching coral, a releasing net, chip signals, casting lines, sonar, a swimming turtle, compass routes, market fleets, listening waves, a marine shield, and funding coins. Headings and body text stay at a fixed size and position, with a short dissolve. There are no cloned text zooms, spinning screenshots, or word-by-word entrances.
 - The same transparent vector objects appear in available scene margins and travel into the transition. Chapter openings give them more space. Dense portrait layouts omit decoration where it would overlap reading.
 - Use the fullscreen icon at bottom right, or press **F**. Escape exits fullscreen.
-- Slide 4 keeps the concept drawing against the slide background. It dissolves into the 3D model on slide 5 at the same size, position and angle; rotation begins after the transition. Use **Close up** to magnify details, **Full view** to return, or pause and reset the model.
+- Andrew’s consumer profile is slide 2. It keeps the deck’s pale green background and summarizes his interests, bycatch problem, and need for earlier species recognition.
+- The Our Solution slide includes the interactive product view. Use **Close up** to magnify details, **Full view** to return, or pause and reset the model.
 - The TAM/SAM/SOM chart builds its nested circles and reveals the original market figures. The funds chart draws its four donut segments and reveals the original amounts. Both retain an **Original graphic** link.
 - TAM, SAM, and SOM are summarized together on one market slide.
 - Open original diagrams and zoom to 400% for details.
@@ -37,10 +38,12 @@ To create a single downloadable presentation that opens directly in a browser, r
 
 ## Content fidelity
 
-`public/Blue-Catch-Pitch-Deck.pdf` is an unchanged copy of the provided PDF. `public/originals/` contains faithful page renders for the source viewer. `public/assets/` contains images extracted from the PDF; `original-waves.svg` preserves the cover's original vector wave artwork. `public/deck-content.json` preserves the extracted source text by page. `src/scene-art.js` contains the new decorative vector illustrations; they are separate from the original diagrams and data. No stock imagery is used. All fonts and assets are served locally.
+`public/Blue-Catch-Pitch-Deck.pdf` is an unchanged copy of the provided PDF. `public/originals/` contains faithful page renders for the source viewer. `public/assets/` contains presentation images; `original-waves.svg` preserves the cover's original vector wave artwork. `public/deck-content.json` preserves the extracted source text by page. `src/scene-art.js` contains the new decorative vector illustrations; they are separate from the original diagrams and data. All fonts and assets are served locally.
+
+Andrew is an illustrative consumer persona. His representative fishing photograph, `public/assets/consumer-angler.jpg`, is an unmodified public-domain U.S. Army photograph by Staff Sgt. Emily Russell: [Reel Adventure; Troopers Fish With Pro Salt Water Angler](https://commons.wikimedia.org/wiki/File:Reel_Adventure;_Troopers_Fish_With_Pro_Salt_Water_Angler_DVIDS122093.jpg). The photographed people are not being identified as Andrew or presented as interviewed customers.
 
 The page keeps the deck's stated market values and arithmetic exactly as supplied; it does not validate or correct the business assumptions. The original image-based SWOT, mind maps, strategy chart, market infographic, value proposition, and financial graphic are available at full size.
 
 ## Browser checks
 
-Run `npm test` for the Playwright regression suite. It checks the aligned sketch-to-model transition, background blending and Close up magnification on desktop and portrait, refresh playback, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.
+Run `npm test` for the Playwright regression suite. It checks Andrew’s profile and photo, slide order, refresh playback, object transitions without moving typography, pausing during a cut, slide focus, exact chart values, original-image access, decorative-art spacing, portrait fitting, and reduced motion. The configuration uses an installed Chromium when available; otherwise install a browser with `npx playwright install chromium`. `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` can select another Chromium binary.

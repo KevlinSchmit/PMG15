@@ -3,6 +3,7 @@ import { mountSceneArt, sceneArt } from './scene-art.js';
 // A cut belongs to its subject. Dense pages keep their objects in the margins.
 const profiles = {
   surface: ['surface-school-departure', 'school', 'hero', 'school'],
+  'consumer-profile': ['angler-perspective-reveal', 'fleet', 'hidden', 'fleet'],
   challenge: ['bycatch-net-release', 'net', 'footer', 'net'],
   drivers: ['technology-signal-relay', 'chip', 'footer', 'signal'],
   solution: ['blueprint-to-product', 'lure', 'corner', 'blueprint'],
@@ -55,7 +56,7 @@ export async function enterSlide(slide, index, paused) {
   ]);
   if (version !== latestEntry || !slide.classList.contains('is-active') || paused()) return;
   // Reading stays still. Only a quiet dissolve, never word-by-word zooms or rotations.
-  slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape,.problem-thesis,.next-step-lead,.next-step-proof,.net-vision').forEach(element => {
+  slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape,.problem-thesis,.next-step-lead,.next-step-proof,.net-vision,.consumer-photo,.consumer-copy').forEach(element => {
     if (element.parentElement.closest('.map-heading,.calculation-content')) return;
     // Fading this transparent wrapper isolates the multiply-blended PNG and
     // exposes its white paper. Keep the drawing in the slide's paint context.

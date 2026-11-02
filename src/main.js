@@ -1,5 +1,6 @@
 import './style.css';
 import './problem.css';
+import './consumer.css';
 import './pitch-legibility.css';
 import './product.css';
 import './scene.css';

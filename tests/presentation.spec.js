@@ -4,14 +4,14 @@ async function idle(page) {
   await expect(page.locator('body')).not.toHaveClass(/is-transitioning/);
 }
 async function slide(page, number) {
-  await expect(page.locator('#slide-position')).toHaveText(`${String(number).padStart(2, '0')} / 12`);
+  await expect(page.locator('#slide-position')).toHaveText(`${String(number).padStart(2, '0')} / 13`);
   await idle(page);
 }
 
 test('refreshing the final scene restarts at page one with working navigation', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/#slide-12');
-  await slide(page, 12);
+  await page.goto('/#slide-13');
+  await slide(page, 13);
   await page.reload();
   await slide(page, 1);
   await expect(page).toHaveURL(/#slide-1$/);
@@ -43,12 +43,12 @@ test('all scenes have object transitions, steady typography, and working navigat
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   const transitions = await page.locator('.slide').evaluateAll(slides => slides.map(s => s.dataset.transition));
-  expect(new Set(transitions).size).toBe(12);
+  expect(new Set(transitions).size).toBe(13);
   await expect(page.locator('#market,#competition,#definition,#uvp,#financials')).toHaveCount(0);
   await expect(page.locator('.kinetic-word')).toHaveCount(0);
-  await expect(page.locator('.scene-object')).toHaveCount(12);
+  await expect(page.locator('.scene-object')).toHaveCount(13);
   expect(await page.locator('.slide').evaluateAll(slides => new Set(slides.map(s => s.dataset.cut)).size)).toBeGreaterThanOrEqual(9);
-  for (let i = 1; i < 12; i++) {
+  for (let i = 1; i < 13; i++) {
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('.transition-ocean')).toHaveClass(/play/);
     await expect(page.locator('.transition-ocean h1,.transition-ocean h2,.transition-ocean li,.transition-source')).toHaveCount(0);
@@ -65,31 +65,31 @@ test('all scenes have object transitions, steady typography, and working navigat
 });
 
 test('pausing an object transition finishes navigation and removes its overlay', async ({ page }) => {
-  await page.goto('/#slide-6');
+  await page.goto('/#slide-7');
   await page.keyboard.press('ArrowRight');
   await expect(page.locator('.transition-object')).toHaveCount(1);
   await page.getByRole('button', { name: 'Pause animations' }).click();
-  await slide(page, 7);
+  await slide(page, 8);
   await expect(page.locator('.transition-ocean')).not.toHaveClass(/play/);
   await expect(page.locator('.transition-object')).toHaveCount(0);
   expect(await page.locator('.slide.is-active').evaluate(scene => scene.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
   await page.keyboard.press('ArrowLeft');
-  await slide(page, 6);
+  await slide(page, 7);
   await page.getByRole('button', { name: 'Resume animations' }).click();
   await page.keyboard.press('ArrowRight');
-  await slide(page, 7);
+  await slide(page, 8);
 });
 
 test('redrawn charts animate to the exact source figures and retain original graphics', async ({ page }) => {
-  await page.goto('/#slide-6');
+  await page.goto('/#slide-7');
   for (const value of ['$941,300,000', '$740,520,000', '$3,495,000']) {
     await expect(page.locator('#market-chart .market-ledger strong', { hasText: value })).toBeVisible();
   }
   await page.locator('#market-overview .original-chart-button').click();
   await expect(page.locator('.image-dialog')).toBeVisible();
   await page.keyboard.press('Escape');
-  await page.goto('/#slide-11');
-  await slide(page, 11);
+  await page.goto('/#slide-12');
+  await slide(page, 12);
   await expect(page.locator('#funds-chart .donut-center strong')).toHaveText('$1,140,403.97');
   await expect(page.locator('.fund-arc')).toHaveCount(4);
   for (const value of ['$711,250', '$192,858.09', '$126,000', '$110,295.88']) {
@@ -99,15 +99,15 @@ test('redrawn charts animate to the exact source figures and retain original gra
 });
 
 test('requested slide order, product copy, and source dialogs are preserved', async ({ page }) => {
-  await page.goto('/#slide-3');
+  await page.goto('/#slide-4');
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'value');
   await expect(page.locator('#product-360')).toHaveCount(0);
   await expect(page.locator('#solution .product-model-embed')).toHaveCount(1);
-  await page.goto('/#slide-6');
-  await slide(page, 6);
+  await page.goto('/#slide-7');
+  await slide(page, 7);
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'market-overview');
   await page.keyboard.press('ArrowRight');
-  await slide(page, 7);
+  await slide(page, 8);
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'swot');
   await expect(page.locator('#swot .source-trigger')).toBeVisible();
   await page.locator('#swot .source-trigger').click();
@@ -123,7 +123,7 @@ test('decoration leaves reading and source controls clear on desktop and portrai
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await page.goto('/?spacing=' + width);
-    for (let i = 1; i <= 12; i++) {
+    for (let i = 1; i <= 13; i++) {
       if (i > 1) await page.keyboard.press('ArrowRight');
       await slide(page, i);
       const hits = await page.locator('.slide.is-active').evaluate(scene => {
@@ -152,7 +152,7 @@ test('portrait slides fit without scrolling and reduced motion shows final conte
   await page.goto('/');
   await expect(page.locator('body')).toHaveClass(/motion-paused/);
   const issues = [];
-  for (let i = 1; i <= 12; i++) {
+  for (let i = 1; i <= 13; i++) {
     if (i > 1) await page.keyboard.press('ArrowRight');
     await slide(page, i);
     const overflow = await page.locator('.slide.is-active').evaluate(s => {
@@ -167,4 +167,23 @@ test('portrait slides fit without scrolling and reduced motion shows final conte
   }
   expect(issues).toEqual([]);
   await expect(page.locator('#funds-chart .donut-center strong')).toHaveText('$1,140,403.97');
+});
+
+test('Andrew’s brief consumer profile follows the cover with a local fishing photo', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  await page.keyboard.press('ArrowRight');
+  await slide(page, 2);
+  const profile = page.locator('.slide.is-active');
+  await expect(profile).toHaveAttribute('id', 'consumer-profile');
+  await expect(profile.getByRole('heading')).toHaveText('Meet Andrew.');
+  await expect(profile.locator('.consumer-details')).toContainText('fishing at sea');
+  await expect(profile.locator('.consumer-details')).toContainText('protected species');
+  expect((await profile.locator('.consumer-details').innerText()).split(/\s+/).length).toBeLessThan(55);
+  const photo = profile.locator('img');
+  await expect(photo).toHaveAttribute('src', '/assets/consumer-angler.jpg');
+  await expect.poll(() => photo.evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
+  await page.keyboard.press('ArrowRight');
+  await slide(page, 3);
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'challenge');
 });
