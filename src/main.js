@@ -8,6 +8,7 @@ import './charts.css';
 import './motion.css';
 import './overview.css';
 import './ambient.css';
+import './closing.css';
 import { mountScenes, mountCharts } from './visuals.js';
 import { prepareMotion, enterSlide, stopEntrances, transitionSlides, finishTransition } from './motion.js';
 

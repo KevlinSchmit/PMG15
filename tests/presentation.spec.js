@@ -4,14 +4,14 @@ async function idle(page) {
   await expect(page.locator('body')).not.toHaveClass(/is-transitioning/);
 }
 async function slide(page, number) {
-  await expect(page.locator('#slide-position')).toHaveText(`${String(number).padStart(2, '0')} / 13`);
+  await expect(page.locator('#slide-position')).toHaveText(`${String(number).padStart(2, '0')} / 15`);
   await idle(page);
 }
 
 test('refreshing the final scene restarts at page one with working navigation', async ({ page }) => {
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/#slide-13');
-  await slide(page, 13);
+  await page.goto('/#slide-15');
+  await slide(page, 15);
   await page.reload();
   await slide(page, 1);
   await expect(page).toHaveURL(/#slide-1$/);
@@ -43,12 +43,12 @@ test('all scenes have object transitions, steady typography, and working navigat
   page.on('pageerror', error => errors.push(error.message));
   await page.goto('/');
   const transitions = await page.locator('.slide').evaluateAll(slides => slides.map(s => s.dataset.transition));
-  expect(new Set(transitions).size).toBe(13);
+  expect(new Set(transitions).size).toBe(15);
   await expect(page.locator('#market,#competition,#definition,#uvp,#financials')).toHaveCount(0);
   await expect(page.locator('.kinetic-word')).toHaveCount(0);
-  await expect(page.locator('.scene-object')).toHaveCount(13);
+  await expect(page.locator('.scene-object')).toHaveCount(15);
   expect(await page.locator('.slide').evaluateAll(slides => new Set(slides.map(s => s.dataset.cut)).size)).toBeGreaterThanOrEqual(9);
-  for (let i = 1; i < 13; i++) {
+  for (let i = 1; i < 15; i++) {
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('.transition-ocean')).toHaveClass(/play/);
     await expect(page.locator('.transition-ocean h1,.transition-ocean h2,.transition-ocean li,.transition-source')).toHaveCount(0);
@@ -123,7 +123,7 @@ test('decoration leaves reading and source controls clear on desktop and portrai
   for (const width of [1440, 390]) {
     await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
     await page.goto('/?spacing=' + width);
-    for (let i = 1; i <= 13; i++) {
+    for (let i = 1; i <= 15; i++) {
       if (i > 1) await page.keyboard.press('ArrowRight');
       await slide(page, i);
       const hits = await page.locator('.slide.is-active').evaluate(scene => {
@@ -152,7 +152,7 @@ test('portrait slides fit without scrolling and reduced motion shows final conte
   await page.goto('/');
   await expect(page.locator('body')).toHaveClass(/motion-paused/);
   const issues = [];
-  for (let i = 1; i <= 13; i++) {
+  for (let i = 1; i <= 15; i++) {
     if (i > 1) await page.keyboard.press('ArrowRight');
     await slide(page, i);
     const overflow = await page.locator('.slide.is-active').evaluate(s => {
@@ -210,7 +210,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     const overview = page.getByRole('dialog', { name: 'Slide overview' });
     await expect(overview).toBeVisible();
     const cards = overview.locator('.overview-slide');
-    await expect(cards).toHaveCount(13);
+    await expect(cards).toHaveCount(15);
     await expect(cards.nth(1)).toHaveAttribute('aria-current', 'page');
     await expect(cards.nth(1)).toBeFocused();
     const order = await page.locator('#presentation .slide').evaluateAll(slides => slides.map(slide => slide.dataset.title));
@@ -228,8 +228,8 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await expect(cards.last()).toBeFocused();
     await expect.poll(() => cards.last().locator('img').evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
     await page.keyboard.press('Enter');
-    await slide(page, 13);
-    await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'next-step');
+    await slide(page, 15);
+    await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'thank-you');
     await toggle.click();
     await expect(cards.last()).toHaveAttribute('aria-current', 'page');
     await page.keyboard.press('Home');
@@ -274,4 +274,34 @@ test('cover illustrations move slowly and stop for pause and reduced motion', as
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await expect(page.locator('body')).toHaveClass(/motion-paused/);
   expect(await page.locator('#surface').evaluate(slide => slide.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
+});
+
+
+test('the Pro Forma link opens the supplied spreadsheet from fullscreen, followed by Thank You', async ({ page }) => {
+  const spreadsheet = 'https://docs.google.com/spreadsheets/d/1PcS-zDE94jpFI5VOcXDihgA-AtQnOXyXWg-bBoQf8Xo/edit?gid=0#gid=0';
+  // Verify the browser navigation without depending on Google account access.
+  await page.context().route('https://docs.google.com/spreadsheets/**', route => route.fulfill({ contentType: 'text/html', body: '<title>Pro Forma spreadsheet</title>' }));
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/#slide-13');
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'next-step');
+  await page.getByRole('button', { name: 'Next slide' }).click();
+  await slide(page, 14);
+  await expect(page.locator('#pro-forma h2')).toHaveText('Pro Forma & Financial Breakdown');
+  const link = page.getByRole('link', { name: 'View Full Pro Forma Spreadsheet →', exact: true });
+  await expect(link).toHaveAttribute('href', spreadsheet);
+  await expect(link).toHaveAttribute('target', '_blank');
+  await page.getByRole('button', { name: 'Enter fullscreen presentation' }).click();
+  await expect.poll(() => page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true);
+  const popupOpened = page.waitForEvent('popup');
+  await link.click();
+  const popup = await popupOpened;
+  await expect(popup).toHaveURL(spreadsheet);
+  await slide(page, 14);
+  await popup.close();
+  await page.bringToFront();
+  await page.getByRole('button', { name: 'Next slide', exact: true }).click();
+  await slide(page, 15);
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'thank-you');
+  await expect(page.locator('#thank-you h2')).toHaveText('Thank you.');
+  await expect(page.getByRole('button', { name: 'Restart presentation' })).toBeVisible();
 });

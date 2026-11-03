@@ -15,7 +15,9 @@ const profiles = {
   value: ['protected-fish-release', 'turtle', 'value', 'turtle'],
   'visual-value': ['camera-field-of-view', 'focus', 'corner', 'scan'],
   funds: ['funding-return-to-ocean', 'funds', 'footer', 'return'],
-  'next-step': ['smart-net-expansion', 'net', 'corner', 'net']
+  'next-step': ['smart-net-expansion', 'net', 'corner', 'net'],
+  'pro-forma': ['financial-model-breakdown', 'funds', 'closing', 'coins'],
+  'thank-you': ['closing-school-farewell', 'school', 'closing', 'school']
 };
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 const easing = 'cubic-bezier(.22,.65,.3,1)';
@@ -56,7 +58,7 @@ export async function enterSlide(slide, index, paused) {
   ]);
   if (version !== latestEntry || !slide.classList.contains('is-active') || paused()) return;
   // Reading stays still. Only a quiet dissolve, never word-by-word zooms or rotations.
-  slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape,.problem-thesis,.next-step-lead,.next-step-proof,.net-vision,.consumer-photo,.consumer-copy').forEach(element => {
+  slide.querySelectorAll('h1,h2,.map-heading,.calculation-content,.art-frame,.challenge-grid,.numbers-strip,.drivers,.solution-features,.sketch-button,.interview-content,.value-statement,.financial-notes,.demo-aside,.product-definition,.table-scroll,.landscape,.problem-thesis,.next-step-lead,.next-step-proof,.net-vision,.consumer-photo,.consumer-copy,.closing-copy').forEach(element => {
     if (element.parentElement.closest('.map-heading,.calculation-content')) return;
     // Fading this transparent wrapper isolates the multiply-blended PNG and
     // exposes its white paper. Keep the drawing in the slide's paint context.
