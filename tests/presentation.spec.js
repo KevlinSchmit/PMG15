@@ -30,7 +30,7 @@ test('a legacy pause and an explicit pause do not silently suppress motion after
   await page.reload();
   await expect(page.locator('body')).not.toHaveClass(/motion-paused/);
   await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', 'cover-tide-reveal');
+  await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', 'wave-sweeps-the-title');
   await slide(page, 2);
   await page.reload();
   await slide(page, 1);
@@ -38,25 +38,32 @@ test('a legacy pause and an explicit pause do not silently suppress motion after
   await expect.poll(() => page.locator('.slide.is-active').evaluate(s => s.getAnimations({ subtree: true }).filter(a => a.playState === 'running').length)).toBeGreaterThan(0);
 });
 
-test('transitions vary, animate live content, and leave no cloned art or lingering effects', async ({ page }) => {
+test('animated scene changes travel visibly, vary their choreography, and settle cleanly', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (message.type() === 'error' && message.text().includes('Slide transition failed')) errors.push(message.text()); });
   await page.goto('/');
   const profiles = await page.locator('#presentation .slide').evaluateAll(slides => slides.map(slide => ({ effect: slide.dataset.transition, kind: slide.dataset.cut, duration: +slide.dataset.duration })));
   expect(new Set(profiles.map(profile => profile.kind)).size).toBeGreaterThanOrEqual(9);
-  expect(profiles.every(profile => profile.duration <= 650)).toBe(true);
+  expect(profiles.every(profile => profile.duration >= 1200 && profile.duration <= 1700)).toBe(true);
   await expect(page.locator('.scene-object')).toHaveCount(15);
   let movingTextCuts = 0;
+  let largeMotionCuts = 0;
   for (let i = 1; i < 15; i++) {
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('body')).toHaveClass(/is-transitioning/);
     const movesText = await page.locator('.slide.is-arriving').evaluate(slide => slide.getAnimations({ subtree: true }).some(animation => {
       const target = animation.effect.target;
-      return target !== slide && target.textContent.trim() && animation.effect.getKeyframes().some(frame => frame.transform?.includes('translate'));
+      return target !== slide && target.textContent.trim() && animation.effect.getKeyframes().some(frame => { if (!frame.transform || frame.transform === 'none') return false; const matrix = new DOMMatrix(frame.transform); return Math.max(Math.abs(matrix.m41), Math.abs(matrix.m42)) > 30; });
     }));
     if (movesText) movingTextCuts++;
-    expect(await page.locator('.slide.is-arriving,.slide.is-departing').evaluateAll(slides => slides.flatMap(slide => slide.getAnimations({ subtree: true })).filter(animation => animation.effect.getTiming().iterations !== Infinity).every(animation => animation.effect.getComputedTiming().endTime <= 650))).toBe(true);
+    const substantial = await page.locator('.slide.is-arriving,.slide.is-departing').evaluateAll(slides => slides.flatMap(slide => slide.getAnimations({ subtree: true })).some(animation => animation.effect.getKeyframes().some(frame => {
+      if (!frame.transform || frame.transform === 'none') return false;
+      const matrix = new DOMMatrix(frame.transform);
+      return Math.max(Math.abs(matrix.m41), Math.abs(matrix.m42)) >= 180;
+    })));
+    if (substantial) largeMotionCuts++;
+    expect(await page.locator('.slide.is-arriving,.slide.is-departing').evaluateAll(slides => slides.flatMap(slide => slide.getAnimations({ subtree: true })).filter(animation => animation.effect.getTiming().iterations !== Infinity).every(animation => animation.effect.getComputedTiming().endTime <= 1700))).toBe(true);
     await expect(page.locator('.transition-object,.transition-swimmer,.transition-source')).toHaveCount(0);
     await expect(page.locator('.transition-ocean image,.transition-ocean img')).toHaveCount(0);
     await slide(page, i + 1);
@@ -67,6 +74,7 @@ test('transitions vary, animate live content, and leave no cloned art or lingeri
     expect(await page.locator('.slide.is-active h1,.slide.is-active h2,.slide.is-active h3').evaluateAll(headings => headings.every(heading => getComputedStyle(heading).transform === 'none'))).toBe(true);
   }
   expect(movingTextCuts).toBeGreaterThanOrEqual(8);
+  expect(largeMotionCuts).toBe(14);
   await page.getByRole('button', { name: 'Restart presentation' }).click();
   await slide(page, 1);
   expect(errors).toEqual([]);

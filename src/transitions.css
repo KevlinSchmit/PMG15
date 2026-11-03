@@ -14,3 +14,7 @@
 .driver-icon .detail-wireframe{stroke-width:1.1;fill:none}
 .art-engraving{pointer-events:none}
 .portrait .funds-slide .scene-object{top:100px}
+.thank-you-copy .thank-first,.thank-you-copy h2>em{display:inline-block}
+.cover .hero-art:before{display:none}
+.hero-glow{position:absolute;left:5%;top:0;width:650px;height:650px;border-radius:50%;background:#c5ddb9;opacity:.65;animation:cover-glow-breathe 28s ease-in-out infinite}
+.portrait .hero-glow{width:620px;height:620px}

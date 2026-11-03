@@ -28,6 +28,7 @@ const stage = $('.slide-stage');
 const transition = $('.transition-ocean');
 let current = 0;
 let busy = false;
+let activeTransition;
 let sceneTimer;
 const initialSlide = Number(location.hash.match(/^#slide-(\d+)$/)?.[1]) - 1;
 const refreshed = performance.getEntriesByType('navigation')[0]?.type === 'reload';
@@ -88,21 +89,23 @@ function showSlide(index, { entrance = true } = {}) {
 }
 async function goTo(index, { immediate = false } = {}) {
   index = Math.max(0, Math.min(slides.length - 1, index));
-  if (immediate && busy) finishTransition();
+  if (immediate && busy) { finishTransition(); await activeTransition; }
   if (index === current || (busy && !immediate) || document.querySelector('dialog[open]')) return;
   clearTimeout(sceneTimer);
   stopEntrances();
-  if (immediate || paused || reduceMotion.matches) { showSlide(index); return; }
+  if (paused || reduceMotion.matches) { showSlide(index); return; }
   busy = true;
   document.body.classList.add('is-transitioning');
   try {
-    await transitionSlides(slides[current], slides[index], transition, index < current, () => showSlide(index, { entrance: false }));
+    activeTransition = transitionSlides(slides[current], slides[index], transition, index < current, () => showSlide(index, { entrance: false }));
+    await activeTransition;
   } catch (error) {
     // Always complete navigation even if the browser cannot animate an effect.
     console.error('Slide transition failed:', error);
     showSlide(index);
   } finally {
     busy = false;
+    activeTransition = undefined;
     document.body.classList.remove('is-transitioning');
     stage.classList.remove('changing');
   }
