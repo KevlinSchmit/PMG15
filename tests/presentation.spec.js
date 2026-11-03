@@ -30,7 +30,7 @@ test('a legacy pause and an explicit pause do not silently suppress motion after
   await page.reload();
   await expect(page.locator('body')).not.toHaveClass(/motion-paused/);
   await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', 'surface-school-departure');
+  await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', 'cover-tide-reveal');
   await slide(page, 2);
   await page.reload();
   await slide(page, 1);
@@ -38,40 +38,48 @@ test('a legacy pause and an explicit pause do not silently suppress motion after
   await expect.poll(() => page.locator('.slide.is-active').evaluate(s => s.getAnimations({ subtree: true }).filter(a => a.playState === 'running').length)).toBeGreaterThan(0);
 });
 
-test('all scenes have object transitions, steady typography, and working navigation', async ({ page }) => {
+test('transitions vary, animate live content, and leave no cloned art or lingering effects', async ({ page }) => {
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
+  page.on('console', message => { if (message.type() === 'error' && message.text().includes('Slide transition failed')) errors.push(message.text()); });
   await page.goto('/');
-  const transitions = await page.locator('.slide').evaluateAll(slides => slides.map(s => s.dataset.transition));
-  expect(new Set(transitions).size).toBe(15);
-  await expect(page.locator('#market,#competition,#definition,#uvp,#financials')).toHaveCount(0);
-  await expect(page.locator('.kinetic-word')).toHaveCount(0);
+  const profiles = await page.locator('#presentation .slide').evaluateAll(slides => slides.map(slide => ({ effect: slide.dataset.transition, kind: slide.dataset.cut, duration: +slide.dataset.duration })));
+  expect(new Set(profiles.map(profile => profile.kind)).size).toBeGreaterThanOrEqual(9);
+  expect(profiles.every(profile => profile.duration <= 650)).toBe(true);
   await expect(page.locator('.scene-object')).toHaveCount(15);
-  expect(await page.locator('.slide').evaluateAll(slides => new Set(slides.map(s => s.dataset.cut)).size)).toBeGreaterThanOrEqual(9);
+  let movingTextCuts = 0;
   for (let i = 1; i < 15; i++) {
     await page.keyboard.press('ArrowRight');
-    await expect(page.locator('.transition-ocean')).toHaveClass(/play/);
-    await expect(page.locator('.transition-ocean h1,.transition-ocean h2,.transition-ocean li,.transition-source')).toHaveCount(0);
-    await expect(page.locator('.transition-object svg')).toHaveCount(1);
+    await expect(page.locator('body')).toHaveClass(/is-transitioning/);
+    const movesText = await page.locator('.slide.is-arriving').evaluate(slide => slide.getAnimations({ subtree: true }).some(animation => {
+      const target = animation.effect.target;
+      return target !== slide && target.textContent.trim() && animation.effect.getKeyframes().some(frame => frame.transform?.includes('translate'));
+    }));
+    if (movesText) movingTextCuts++;
+    expect(await page.locator('.slide.is-arriving,.slide.is-departing').evaluateAll(slides => slides.flatMap(slide => slide.getAnimations({ subtree: true })).filter(animation => animation.effect.getTiming().iterations !== Infinity).every(animation => animation.effect.getComputedTiming().endTime <= 650))).toBe(true);
+    await expect(page.locator('.transition-object,.transition-swimmer,.transition-source')).toHaveCount(0);
+    await expect(page.locator('.transition-ocean image,.transition-ocean img')).toHaveCount(0);
     await slide(page, i + 1);
-    await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', transitions[i - 1]);
+    await expect(page.locator('.transition-ocean')).toHaveAttribute('data-effect', profiles[i - 1].effect);
+    await expect(page.locator('.slide.is-arriving,.slide.is-departing')).toHaveCount(0);
     await expect(page.locator('.slide:not([inert])')).toHaveCount(1);
-    expect(await page.locator('.slide.is-active h1,.slide.is-active h2,.slide.is-active h3').evaluateAll(headings => headings.every(h => getComputedStyle(h).transform === 'none'))).toBe(true);
+    expect(await page.locator('.slide.is-active').evaluate(scene => scene.style.clipPath === '' && scene.style.opacity === '' && scene.style.transform === '')).toBe(true);
+    expect(await page.locator('.slide.is-active h1,.slide.is-active h2,.slide.is-active h3').evaluateAll(headings => headings.every(heading => getComputedStyle(heading).transform === 'none'))).toBe(true);
   }
-  await expect(page.getByRole('button', { name: 'Restart presentation' })).toBeVisible();
+  expect(movingTextCuts).toBeGreaterThanOrEqual(8);
   await page.getByRole('button', { name: 'Restart presentation' }).click();
   await slide(page, 1);
   expect(errors).toEqual([]);
 });
 
-test('pausing an object transition finishes navigation and removes its overlay', async ({ page }) => {
+test('pausing a transition finishes navigation and clears the live page effects', async ({ page }) => {
   await page.goto('/#slide-8');
   await page.keyboard.press('ArrowRight');
-  await expect(page.locator('.transition-object')).toHaveCount(1);
+  await expect(page.locator('body')).toHaveClass(/is-transitioning/);
   await page.getByRole('button', { name: 'Pause animations' }).click();
   await slide(page, 9);
   await expect(page.locator('.transition-ocean')).not.toHaveClass(/play/);
-  await expect(page.locator('.transition-object')).toHaveCount(0);
+  await expect(page.locator('.slide.is-arriving,.slide.is-departing')).toHaveCount(0);
   expect(await page.locator('.slide.is-active').evaluate(scene => scene.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
   await page.keyboard.press('ArrowLeft');
   await slide(page, 8);
@@ -129,7 +137,17 @@ test('decoration leaves reading and source controls clear on desktop and portrai
       const hits = await page.locator('.slide.is-active').evaluate(scene => {
         const art = scene.querySelector('.scene-object');
         if (getComputedStyle(art).visibility === 'hidden') return [];
-        const marks = [...art.querySelectorAll('path,circle,ellipse,rect')].map(e => e.getBoundingClientRect());
+        const marks = [...art.querySelectorAll('path,circle,ellipse,rect,.art-engraving,.pen-fish image')].map(element => {
+          if (!element.matches('.art-engraving')) return element.getBoundingClientRect();
+          // A nested SVG's content bounds include the entire image sheet;
+          // collision checks need its clipped viewport in screen coordinates.
+          const { x, y, width, height } = Object.fromEntries(['x','y','width','height'].map(key => [key, element[key].baseVal.value]));
+          const matrix = element.parentElement.getScreenCTM();
+          const points = [[x,y],[x+width,y],[x,y+height],[x+width,y+height]].map(([px,py]) => new DOMPoint(px,py).matrixTransform(matrix));
+          const left = Math.min(...points.map(point => point.x)), right = Math.max(...points.map(point => point.x));
+          const top = Math.min(...points.map(point => point.y)), bottom = Math.max(...points.map(point => point.y));
+          return new DOMRect(left,top,right-left,bottom-top);
+        });
         const walker = document.createTreeWalker(scene, NodeFilter.SHOW_TEXT);
         const hits = [];
         while (walker.nextNode()) {
@@ -304,4 +322,22 @@ test('the Pro Forma link opens the supplied spreadsheet from fullscreen, followe
   await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'thank-you');
   await expect(page.locator('#thank-you h2')).toHaveText('Thank you.');
   await expect(page.getByRole('button', { name: 'Restart presentation' })).toBeVisible();
+});
+
+
+test('reverse navigation and overview interruption restore clean page styles', async ({ page }) => {
+  await page.goto('/#slide-15');
+  for (let number = 14; number >= 1; number--) {
+    await page.keyboard.press('ArrowLeft');
+    await slide(page, number);
+    await expect(page.locator('.slide.is-arriving,.slide.is-departing')).toHaveCount(0);
+    expect(await page.locator('.slide.is-active').evaluate(slide => slide.style.clipPath === '' && slide.style.opacity === '' && slide.style.background === '')).toBe(true);
+  }
+  await page.keyboard.press('ArrowRight');
+  await expect(page.locator('body')).toHaveClass(/is-transitioning/);
+  await page.getByRole('button', { name: 'Open slide overview' }).click();
+  await page.getByRole('button', { name: 'Go to slide 14: Pro Forma & Financial Breakdown' }).click();
+  await slide(page, 14);
+  await expect(page.locator('.slide.is-active')).toHaveAttribute('id', 'pro-forma');
+  await expect(page.locator('.slide.is-arriving,.slide.is-departing')).toHaveCount(0);
 });

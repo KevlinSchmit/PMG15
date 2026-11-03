@@ -9,6 +9,7 @@ import './motion.css';
 import './overview.css';
 import './ambient.css';
 import './closing.css';
+import './transitions.css';
 import { mountScenes, mountCharts } from './visuals.js';
 import { prepareMotion, enterSlide, stopEntrances, transitionSlides, finishTransition } from './motion.js';
 
@@ -49,7 +50,7 @@ window.addEventListener('resize', fitStage);
 window.visualViewport?.addEventListener('resize', fitStage);
 fitStage();
 
-function showSlide(index) {
+function showSlide(index, { entrance = true } = {}) {
   slides.forEach((slide, i) => {
     const active = i === index;
     slide.classList.toggle('is-active', active);
@@ -79,7 +80,7 @@ function showSlide(index) {
       else sceneTimer = setTimeout(() => { scene.dataset.encounter = 'protected'; }, 120);
     }
   }
-  enterSlide(slide, current, () => paused || reduceMotion.matches);
+  if (entrance) enterSlide(slide, current, () => paused || reduceMotion.matches);
   // Decode nearby original diagrams before the next scene is revealed.
   for (const neighbour of [slides[current], slides[current + 1]]) {
     if (neighbour) $$('img', neighbour).forEach(image => { image.loading = 'eager'; image.decode?.().catch(() => {}); });
@@ -95,7 +96,7 @@ async function goTo(index, { immediate = false } = {}) {
   busy = true;
   document.body.classList.add('is-transitioning');
   try {
-    await transitionSlides(slides[current], slides[index], transition, index < current, () => showSlide(index));
+    await transitionSlides(slides[current], slides[index], transition, index < current, () => showSlide(index, { entrance: false }));
   } catch (error) {
     // Always complete navigation even if the browser cannot animate an effect.
     console.error('Slide transition failed:', error);

@@ -1,0 +1,16 @@
+/* Page changes animate the live pages and their contents, never cloned artwork. */
+.slide.is-arriving{visibility:visible;pointer-events:none}
+.slide.is-departing{visibility:visible;pointer-events:none}
+.is-transitioning .slide *,.is-transitioning .slide:before{animation-play-state:paused!important}
+.is-transitioning .presentation-controls{cursor:progress}
+.transition-rule{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.transition-rule path{fill:none;stroke:#527b63;stroke-width:1;stroke-linecap:round}
+.scene-object .art-line{stroke-width:.95}
+.scene-object .art-current{stroke-width:.75;opacity:.4}
+.scene-object .art-route{stroke-dasharray:2 5;stroke-width:.9}
+.scene-object .art-node{stroke-width:1;fill:var(--mint)}
+.driver-icon{--art-ink:#28584b;--art-paper:var(--mint);--art-soft:#d6e3cb}
+.driver-icon>svg{overflow:visible}
+.driver-icon .detail-wireframe{stroke-width:1.1;fill:none}
+.art-engraving{pointer-events:none}
+.portrait .funds-slide .scene-object{top:100px}

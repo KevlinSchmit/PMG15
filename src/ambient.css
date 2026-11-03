@@ -20,9 +20,9 @@
 .scene-object .art-current{animation-duration:24s}
 .scene-object .art-circuit{animation-duration:24s}
 .scene-object .art-scan{animation-duration:24s}
-.driver-icon svg{animation:ambient-icon-drift 20s ease-in-out infinite;transform-origin:center}
-.driver:nth-child(2) .driver-icon svg{animation-delay:-7s}
-.driver:nth-child(3) .driver-icon svg{animation-delay:-14s}
+.driver-icon>svg{animation:ambient-icon-drift 20s ease-in-out infinite;transform-origin:center}
+.driver:nth-child(2) .driver-icon>svg{animation-delay:-7s}
+.driver:nth-child(3) .driver-icon>svg{animation-delay:-14s}
 .plot-point>span{animation:sonar-opacity 14s ease-in-out infinite}
 @keyframes cover-rod-drift{0%,100%{transform:translate(0,0) rotate(-.4deg)}50%{transform:translate(3px,-7px) rotate(.5deg)}}
 @keyframes cover-glow-breathe{0%,100%{scale:1;opacity:.62}50%{scale:1.018;opacity:.72}}
@@ -32,4 +32,4 @@
 @keyframes cover-wave-drift{0%,100%{translate:0 0;rotate:0deg}50%{translate:-7px -4px;rotate:-.3deg}}
 @keyframes ambient-object-drift{0%,100%{translate:0 0;rotate:-.4deg}50%{translate:4px -5px;rotate:.4deg}}
 @keyframes ambient-icon-drift{0%,100%{translate:0 0;rotate:-.6deg}50%{translate:0 -3px;rotate:.6deg}}
-@media(prefers-reduced-motion:reduce){.cover .hero-rod,.cover .hero-art:before,.cover .sea-orbit,.cover .hero-sun,.cover .hero-sun svg,.cover .floating-label,.cover .hero-waves,.scene-object>svg,.scene-object .art-swimmer,.scene-object .art-bob,.scene-object .art-current,.scene-object .art-circuit,.scene-object .art-scan,.driver-icon svg,.plot-point>span{animation:none}}
+@media(prefers-reduced-motion:reduce){.cover .hero-rod,.cover .hero-art:before,.cover .sea-orbit,.cover .hero-sun,.cover .hero-sun svg,.cover .floating-label,.cover .hero-waves,.scene-object>svg,.scene-object .art-swimmer,.scene-object .art-bob,.scene-object .art-current,.scene-object .art-circuit,.scene-object .art-scan,.driver-icon>svg,.plot-point>span{animation:none}}
