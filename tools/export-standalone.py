@@ -28,6 +28,10 @@ html = html.replace(css_link[0], f"<style>{css}</style>")
 
 script_link = re.search(r'<script[^>]*src="([^"]+)"[^>]*></script>', html)
 script = (dist / script_link[1].lstrip("/")).read_text()
+# Scene SVGs also reference the shared pen illustration from JavaScript.
+script = re.sub(r'([\'"])(/assets/[^\'"]+\.(?:png|webp|svg))\1',
+                lambda match: match[1] + data_uri(match[2]) + match[1]
+                if (dist / match[2].lstrip("/")).is_file() else match[0], script)
 previews = {path.stem: data_uri(f"/assets/slide-previews/{path.name}")
             for path in sorted((dist / "assets/slide-previews").glob("*.png"))}
 script = "window.__BLUE_CATCH_PREVIEWS__=" + json.dumps(previews) + ";\n" + script

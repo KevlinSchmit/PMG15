@@ -245,3 +245,33 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     expect(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth)).toBe(false);
   });
 }
+
+
+test('every slide and the embedded product share the same light green background', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/');
+  const colors = await page.locator('#presentation .slide').evaluateAll(slides => [...new Set(slides.map(slide => getComputedStyle(slide).backgroundColor))]);
+  expect(colors).toEqual(['rgb(237, 245, 232)']);
+  await expect(page.locator('body')).toHaveCSS('background-color', colors[0]);
+  await expect(page.frameLocator('.product-model-embed').locator('body')).toHaveCSS('background-color', colors[0]);
+  await expect(page.locator('.hero-waves')).toHaveAttribute('src', '/assets/cover-wave.png');
+  await expect.poll(() => page.locator('.hero-waves').evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
+});
+
+test('cover illustrations move slowly and stop for pause and reduced motion', async ({ page }) => {
+  await page.goto('/');
+  const movingParts = page.locator('#surface .hero-rod,#surface .hero-waves,#surface .hero-sun,#surface .hero-sun svg,#surface .sea-orbit,#surface .floating-label,#surface .scene-object>svg');
+  await expect.poll(() => movingParts.evaluateAll(elements => elements.every(element => element.getAnimations().some(animation => {
+    const timing = animation.effect.getTiming();
+    return animation.playState === 'running' && timing.duration >= 14000 && timing.iterations === Infinity;
+  })))).toBe(true);
+  await expect(page.locator('#surface .pen-fish image')).toHaveCount(3);
+  await expect(page.locator('#surface h1')).toHaveCSS('transform', 'none');
+  await page.getByRole('button', { name: 'Pause animations' }).click();
+  expect(await page.locator('#surface').evaluate(slide => slide.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
+  await page.getByRole('button', { name: 'Resume animations' }).click();
+  await expect.poll(() => movingParts.first().evaluate(element => element.getAnimations().some(animation => animation.playState === 'running'))).toBe(true);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await expect(page.locator('body')).toHaveClass(/motion-paused/);
+  expect(await page.locator('#surface').evaluate(slide => slide.getAnimations({ subtree: true }).some(animation => animation.playState === 'running'))).toBe(false);
+});

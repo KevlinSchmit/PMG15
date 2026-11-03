@@ -2,7 +2,7 @@
 .deck-dialog-head{padding:23px 28px;gap:24px}
 .deck-dialog-head h2{font-size:30px;margin-top:8px}
 .deck-overview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;padding:26px 28px;overflow:auto;min-height:0;flex:1;align-content:start;scroll-padding:26px;overscroll-behavior:contain}
-.overview-slide{display:flex;flex-direction:column;min-width:0;padding:0;text-align:left;border:2px solid transparent;border-radius:5px;background:#f5f6ee;transition:border-color .18s,box-shadow .18s}
+.overview-slide{display:flex;flex-direction:column;min-width:0;padding:0;text-align:left;border:2px solid transparent;border-radius:5px;background:#f4f8ef;transition:border-color .18s,box-shadow .18s}
 .overview-slide:hover{border-color:#82b6a4;box-shadow:0 5px 18px #173b3910}
 .overview-slide[aria-current="page"]{border-color:var(--orange)}
 .overview-slide:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
