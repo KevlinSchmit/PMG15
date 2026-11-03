@@ -284,6 +284,46 @@ test('every slide and the embedded product share the same light green background
   await expect.poll(() => page.locator('.hero-waves').evaluate(image => image.complete && image.naturalWidth > 0)).toBe(true);
 });
 
+test('the model has no white rectangle during forward or backward slide 5–6 motion', async ({ page }) => {
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: width === 390 ? 844 : 900 });
+    await page.goto(`/?model-backdrop=${width}#slide-5`);
+    await expect(page.frameLocator('.product-model-embed').locator('body')).toHaveCSS('background-color', 'rgb(237, 245, 232)');
+    await page.evaluate(() => document.getAnimations().filter(animation => animation.effect.getTiming().iterations !== Infinity).forEach(animation => animation.finish()));
+    for (const [key, destination] of [['ArrowRight', 6], ['ArrowLeft', 5]]) {
+      await page.keyboard.press(key);
+      await expect(page.locator('body')).toHaveClass(/is-transitioning/);
+      for (const progress of [.3, .55, .8, .98]) {
+        await page.evaluate(progress => document.getAnimations().filter(animation => animation.effect.getTiming().iterations !== Infinity).forEach(animation => {
+          animation.pause(); animation.currentTime = animation.effect.getComputedTiming().endTime * progress;
+        }), progress);
+        const bounds = await page.locator('.solution-model-stage').boundingBox();
+        const screenshot = (await page.screenshot({ scale: 'css' })).toString('base64');
+        // Check rendered pixels: computed green styles alone missed the white
+        // surface created when the browser composited the transformed iframe.
+        const whiteRatio = await page.evaluate(async ({ screenshot, bounds }) => {
+          const image = new Image(); image.src = `data:image/png;base64,${screenshot}`; await image.decode();
+          const canvas = document.createElement('canvas'); canvas.width = image.width; canvas.height = image.height;
+          const context = canvas.getContext('2d'); context.drawImage(image, 0, 0);
+          const { data } = context.getImageData(0, 0, canvas.width, canvas.height);
+          let white = 0, total = 0;
+          for (let y = Math.max(0, Math.ceil(bounds.y)); y < Math.min(canvas.height, Math.floor(bounds.y + bounds.height)); y++) {
+            for (let x = Math.max(0, Math.ceil(bounds.x)); x < Math.min(canvas.width, Math.floor(bounds.x + bounds.width)); x++) {
+              const offset = (y * canvas.width + x) * 4;
+              if (data[offset] > 250 && data[offset + 1] > 250 && data[offset + 2] > 250) white++;
+              total++;
+            }
+          }
+          return white / total;
+        }, { screenshot, bounds });
+        expect(whiteRatio, `${width}px ${key} at ${progress}`).toBeLessThan(.03);
+      }
+      await page.evaluate(() => document.getAnimations().filter(animation => animation.effect.getTiming().iterations !== Infinity).forEach(animation => animation.finish()));
+      await slide(page, destination);
+    }
+  }
+});
+
 test('cover illustrations move slowly and stop for pause and reduced motion', async ({ page }) => {
   await page.goto('/');
   const movingParts = page.locator('#surface .hero-rod,#surface .hero-waves,#surface .hero-sun,#surface .hero-sun svg,#surface .sea-orbit,#surface .floating-label,#surface .scene-object>svg');
